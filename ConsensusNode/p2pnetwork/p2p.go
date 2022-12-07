@@ -108,34 +108,9 @@ func (sp *SimpleP2p) dialTcp(id int64) {
 				continue
 			}
 
-			// get specified curve
-			marshalledCurve := config.GetCurve()
-			pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
-			if err != nil {
-				panic(fmt.Errorf("===>[ERROR from dialTcp]Parse elliptic curve error:%s", err))
-			}
-			normalPublicKey := pub.(*ecdsa.PublicKey)
-			curve := normalPublicKey.Curve
-
-			// unmarshal public key
-			x, y := elliptic.Unmarshal(curve, []byte(nodeConfig[i].Pk))
-			newPublicKey := &ecdsa.PublicKey{
-				Curve: curve,
-				X:     x,
-				Y:     y,
-			}
-
-			// store remote ip-conn-id-pk relation
-			sp.mutex.Lock()
-			sp.Peers[conn.RemoteAddr().String()] = conn
-			sp.Ip2Id[conn.RemoteAddr().String()] = int64(i)
-			sp.PeerPublicKeys[int64(i)] = newPublicKey
-			sp.mutex.Unlock()
-			fmt.Printf("===>[P2P] [Node%d<=>%d]Connected=[%s<=>%s]\n", id, i, conn.LocalAddr().String(), conn.RemoteAddr().String())
-
 			// new identity message
 			// send identity message to origin nodes
-			kMsg := message.CreateIdentityMsg(message.MTIdentity, sp.NodeId, conn.LocalAddr().String(), sp.PrivateKey)
+			kMsg := message.CreateIdentityMsg(message.MTIdentity, sp.NodeId, sp.PrivateKey)
 			if err := sp.SendUniqueNode(conn, kMsg); err != nil {
 				panic(fmt.Errorf("===>[ERROR from dialTcp]Send Identity message error:%s", err))
 			}
@@ -198,7 +173,6 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 			fmt.Println(string(buf[:n]))
 			panic(fmt.Errorf("===>[ERROR from waitData]Unmarshal data err:%s", err))
 		}
-		// time.Sleep(100 * time.Millisecond)
 
 		switch conMsg.Typ {
 		// handle new identity message from backups
@@ -209,13 +183,13 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 			marshalledCurve := config.GetCurve()
 			pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
 			if err != nil {
-				panic(fmt.Errorf("===>[ERROR from waitData]Parse elliptic curve error:%s", err))
+				panic(fmt.Errorf("===>[ERROR from dialTcp]Parse elliptic curve error:%s", err))
 			}
 			normalPublicKey := pub.(*ecdsa.PublicKey)
 			curve := normalPublicKey.Curve
 
 			// unmarshal public key
-			x, y := elliptic.Unmarshal(curve, []byte(nodeConfig[conMsg.From].Pk))
+			x, y := elliptic.Unmarshal(curve, conMsg.Payload)
 			newPublicKey := &ecdsa.PublicKey{
 				Curve: curve,
 				X:     x,
@@ -229,16 +203,29 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 				break
 			}
 
-			// add a new node
-			if sp.PeerPublicKeys[conMsg.From] != newPublicKey {
-				sp.mutex.Lock()
-				sp.Ip2Id[conn.RemoteAddr().String()] = conMsg.From
-				sp.PeerPublicKeys[conMsg.From] = newPublicKey
-				sp.mutex.Unlock()
+			// store remote ip-conn-id-pk relation
+			sp.mutex.Lock()
+			sp.Peers[conn.RemoteAddr().String()] = conn
+			sp.Ip2Id[conn.RemoteAddr().String()] = int64(conMsg.From)
+			sp.PeerPublicKeys[int64(conMsg.From)] = newPublicKey
+			sp.mutex.Unlock()
 
-				fmt.Printf("===>[P2P]Get new public key from Node[%d], IP[%s]\n", conMsg.From, conn.RemoteAddr().String())
-				fmt.Printf("===>[P2P]Node[%d<=>%d]Connected=[%s<=>%s]\n", sp.NodeId, conMsg.From, conn.LocalAddr().String(), conn.RemoteAddr().String())
-			}
+			// write new node details into config
+			config.NewConsensusNode(conMsg.From, nodeConfig[conMsg.From].Ip, string(elliptic.Marshal(curve, newPublicKey.X, newPublicKey.Y)))
+
+			fmt.Printf("===>[P2P]Get new public key from Node[%d], IP[%s]\n", conMsg.From, conn.RemoteAddr().String())
+			fmt.Printf("===>[P2P]Node[%d<=>%d]Connected=[%s<=>%s]\n", sp.NodeId, conMsg.From, conn.LocalAddr().String(), conn.RemoteAddr().String())
+
+			// add a new node
+			// if sp.PeerPublicKeys[conMsg.From] != newPublicKey {
+			// 	sp.mutex.Lock()
+			// 	sp.Ip2Id[conn.RemoteAddr().String()] = conMsg.From
+			// 	sp.PeerPublicKeys[conMsg.From] = newPublicKey
+			// 	sp.mutex.Unlock()
+
+			// 	fmt.Printf("===>[P2P]Get new public key from Node[%d], IP[%s]\n", conMsg.From, conn.RemoteAddr().String())
+			// 	fmt.Printf("===>[P2P]Node[%d<=>%d]Connected=[%s<=>%s]\n", sp.NodeId, conMsg.From, conn.LocalAddr().String(), conn.RemoteAddr().String())
+			// }
 
 		// handle consensus message from backups
 		default:
