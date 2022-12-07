@@ -86,7 +86,8 @@ func GetCurve() string {
 func GetPreviousOutput() string {
 	// set config file
 	outputViper := viper.New()
-	outputViper.SetConfigFile("http://152.136.151.161/output.yml")
+	outputViper.SetConfigFile("/var/www/html/output.yml")
+	// outputViper.SetConfigFile("http://152.136.151.161/output.yml")
 
 	if err := outputViper.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("===>[ERROR from GetPreviousOutput]Read config file failed:%s", err))
