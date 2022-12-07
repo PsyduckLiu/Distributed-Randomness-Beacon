@@ -10,6 +10,7 @@ import (
 func Accept() {
 	port := 2211
 	s, err := net.ListenTCP("tcp4", &net.TCPAddr{
+		// IP:   net.IPv4(152, 136, 151, 161),
 		Port: port,
 	})
 	if err != nil {
@@ -28,6 +29,7 @@ func Accept() {
 			continue
 		}
 
+		fmt.Printf("===>[P2P]P2p network accept success:%s\n", conn.RemoteAddr().String())
 		go waitData(conn)
 	}
 }

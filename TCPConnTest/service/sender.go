@@ -15,10 +15,16 @@ func SendMessage(msg string) error {
 		return err
 	}
 
+	fmt.Println(time.Now())
+	fmt.Println("===>Dial tcp success")
+
 	_, err = conn.Write([]byte(msg))
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from WriteTCP]write to node failed:%s", err))
 	}
+
+	fmt.Println(time.Now())
+	fmt.Println("===>Send message success")
 
 	return nil
 }
