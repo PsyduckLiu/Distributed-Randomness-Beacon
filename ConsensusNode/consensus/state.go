@@ -97,7 +97,7 @@ func InitConsensus(id int64) *StateEngine {
 
 // To start randomness beacon, primary writes a random Reveal into Output.yml
 func (s *StateEngine) WriteRandomReveal() {
-	time.Sleep(35 * time.Second)
+	time.Sleep(45 * time.Second)
 	fmt.Println("\n===>[WriteRandomReveal]start wirte config")
 
 	// generate random init input

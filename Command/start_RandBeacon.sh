@@ -22,7 +22,7 @@ done
 # echo ${PID} >> result/running.pid
 # done
 
-sleep 5
+sleep 10
 
 cd ../EntropyProvider
 for i in $(seq 0 4)
