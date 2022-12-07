@@ -32,7 +32,7 @@ func SetupConfig() {
 	configViper := viper.New()
 	configViper.SetConfigFile("../Configuration/config.yml")
 	outputViper := viper.New()
-	outputViper.SetConfigFile("../Configuration/output.yml")
+	outputViper.SetConfigFile("/var/www/html/output.yml")
 	tcViper := viper.New()
 	tcViper.SetConfigFile("../Configuration/TC.yml")
 
@@ -76,7 +76,8 @@ func SetupConfig() {
 		// generate random init output
 		message := []byte("asdkjhdk")
 		randomNum := util.Digest(message)
-		outputViper.Set("PreviousOutput", string(randomNum))
+		// outputViper.Set("PreviousOutput", string(randomNum))
+		outputViper.Set("PreviousOutput", randomNum)
 
 		// group parameter contains prime numbers p,q and a large number n=p*q of groupLength bits
 		groupLength := GetL()
