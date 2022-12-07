@@ -96,42 +96,42 @@ func GetPreviousOutput() string {
 }
 
 // write new id-ip-pk into config
-// func NewConsensusNode(id int64, ip string, pk string) {
-// 	// lock file
-// 	f, err := os.Open("../lock")
-// 	if err != nil {
-// 		panic(fmt.Errorf("===>[ERROR from NewConsensusNode]Open lock failed:%s", err))
-// 	}
-// 	// share lock, concurrently read
-// 	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_EX); err != nil {
-// 		panic(fmt.Errorf("===>[ERROR from NewConsensusNode]Add share lock failed:%s", err))
-// 	}
+func NewConsensusNode(id int64, ip string, pk string) {
+	// lock file
+	f, err := os.Open("../lock")
+	if err != nil {
+		panic(fmt.Errorf("===>[ERROR from NewConsensusNode]Open lock failed:%s", err))
+	}
+	// share lock, concurrently read
+	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_EX); err != nil {
+		panic(fmt.Errorf("===>[ERROR from NewConsensusNode]Add share lock failed:%s", err))
+	}
 
-// 	// set config file
-// 	configViper := viper.New()
-// 	configViper.SetConfigFile("../Configuration/config.yml")
+	// set config file
+	configViper := viper.New()
+	configViper.SetConfigFile("../Configuration/config.yml")
 
-// 	// read config and keep origin settings
-// 	if err := configViper.ReadInConfig(); err != nil {
-// 		panic(fmt.Errorf("===>[ERROR from NewConsensusNode]Read config file failed:%s", err))
-// 	}
+	// read config and keep origin settings
+	if err := configViper.ReadInConfig(); err != nil {
+		panic(fmt.Errorf("===>[ERROR from NewConsensusNode]Read config file failed:%s", err))
+	}
 
-// 	var ipString string = "Node" + strconv.FormatInt(id, 10) + "_Ip"
-// 	var pkString string = "Node" + strconv.FormatInt(id, 10) + "_Pk"
-// 	configViper.Set(ipString, ip)
-// 	configViper.Set(pkString, pk)
+	var ipString string = "Node" + strconv.FormatInt(id, 10) + "_Ip"
+	var pkString string = "Node" + strconv.FormatInt(id, 10) + "_Pk"
+	configViper.Set(ipString, ip)
+	configViper.Set(pkString, pk)
 
-// 	// write new settings
-// 	if err := configViper.WriteConfig(); err != nil {
-// 		panic(fmt.Errorf("===>[ERROR from NewConsensusNode]Write config file failed:%s", err))
-// 	}
-// 	fmt.Printf("\n===>[NewConsensusNode]Add new consensus node[%d] success\n", id)
+	// write new settings
+	if err := configViper.WriteConfig(); err != nil {
+		panic(fmt.Errorf("===>[ERROR from NewConsensusNode]Write config file failed:%s", err))
+	}
+	fmt.Printf("\n===>[NewConsensusNode]Add new consensus node[%d] success\n", id)
 
-// 	// unlock file
-// 	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_UN); err != nil {
-// 		panic(fmt.Errorf("===>[ERROR from NewConsensusNode]Unlock share lock failed:%s", err))
-// 	}
-// }
+	// unlock file
+	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_UN); err != nil {
+		panic(fmt.Errorf("===>[ERROR from NewConsensusNode]Unlock share lock failed:%s", err))
+	}
+}
 
 // remove consensus node from config file
 func RemoveConsensusNode(id int64) {
