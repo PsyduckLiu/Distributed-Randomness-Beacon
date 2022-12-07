@@ -179,22 +179,12 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 		case message.MTIdentity:
 			nodeConfig := config.GetConsensusNode()
 
-			// get specified curve
-			marshalledCurve := config.GetCurve()
-			pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
-			if err != nil {
-				panic(fmt.Errorf("===>[ERROR from dialTcp]Parse elliptic curve error:%s", err))
-			}
-			normalPublicKey := pub.(*ecdsa.PublicKey)
-			curve := normalPublicKey.Curve
-
 			// unmarshal public key
-			x, y := elliptic.Unmarshal(curve, conMsg.Payload)
-			newPublicKey := &ecdsa.PublicKey{
-				Curve: curve,
-				X:     x,
-				Y:     y,
+			pub, err := x509.ParsePKIXPublicKey([]byte(conMsg.Payload))
+			if err != nil {
+				panic(fmt.Errorf("===>[ERROR from waitData]Parse public key error:%s", err))
 			}
+			newPublicKey := pub.(*ecdsa.PublicKey)
 
 			// verify signature
 			verify := signature.VerifySig(conMsg.Payload, conMsg.Sig, newPublicKey)
@@ -211,7 +201,7 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 			sp.mutex.Unlock()
 
 			// write new node details into config
-			config.NewConsensusNode(conMsg.From, nodeConfig[conMsg.From].Ip, string(elliptic.Marshal(curve, newPublicKey.X, newPublicKey.Y)))
+			config.NewConsensusNode(conMsg.From, nodeConfig[conMsg.From].Ip, string(elliptic.Marshal(newPublicKey.Curve, newPublicKey.X, newPublicKey.Y)))
 
 			fmt.Printf("===>[P2P]Get new public key from Node[%d], IP[%s]\n", conMsg.From, conn.RemoteAddr().String())
 			fmt.Printf("===>[P2P]Node[%d<=>%d]Connected=[%s<=>%s]\n", sp.NodeId, conMsg.From, conn.LocalAddr().String(), conn.RemoteAddr().String())
