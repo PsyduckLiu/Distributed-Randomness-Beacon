@@ -86,7 +86,7 @@ func GetCurve() string {
 func GetPreviousOutput() string {
 	// set config file
 	outputViper := viper.New()
-	outputViper.SetConfigFile("../Configuration/output.yml")
+	outputViper.SetConfigFile("/var/www/html/output.yml")
 
 	if err := outputViper.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("===>[ERROR from GetPreviousOutput]Read config file failed:%s", err))
@@ -211,7 +211,7 @@ func ReadConfig() {
 	configViper := viper.New()
 	configViper.SetConfigFile("../Configuration/config.yml")
 	outputViper := viper.New()
-	outputViper.SetConfigFile("../Configuration/output.yml")
+	outputViper.SetConfigFile("152.136.151.161/output.yml")
 
 	if err := configViper.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("===>[ERROR from ReadConfig]Read config file failed:%s", err))

@@ -60,7 +60,7 @@ func StartEntropyNode(id int) {
 // when [previousOutput] in output.yml changes, entropy node starts calculating VRF and sending TC
 func WatchConfig(ecdsaSK *ecdsa.PrivateKey, vrfSK crypto.VrfPrivkey, id int, sig chan interface{}) {
 	// get the earliest output written in output.yml
-	previousOutput := string(config.GetPreviousOutput()
+	previousOutput := string(config.GetPreviousOutput())
 	fmt.Println("\n===>[Watching]The earliest output is", previousOutput)
 
 	// watch config file
