@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"fmt"
 )
 
 func main() {
@@ -15,9 +16,11 @@ func main() {
 	role, _ := strconv.Atoi(os.Args[1])
 
 	if role == 0 {
+		fmt.Println("I'm sender")
 		for i := 0; i < 10; i++ {
+			fmt.Println("Round", i)
 			time.Sleep(500 * time.Millisecond)
-			service.SendMessage("hello" + string(rune(i)))
+			service.SendMessage("hello")
 		}
 	}
 

@@ -7,6 +7,7 @@ import (
 )
 
 func SendMessage(msg string) error {
+	fmt.Println("message is ",msg)
 	// dial remote TCP port
 	conn, err := net.DialTCP("tcp", nil, &net.TCPAddr{IP: net.IPv4(152, 136, 151, 161), Port: 2211})
 	if err != nil {

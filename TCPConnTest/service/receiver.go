@@ -42,7 +42,7 @@ func Accept() {
 		// handle a message
 		fmt.Println("read from", conn.RemoteAddr().String(), time.Now())
 		fmt.Println("Message contains:")
-		fmt.Println(buf[:n])
+		fmt.Println(string(buf[:n]))
 		fmt.Printf("===>[P2P]P2p network accept success:%s\n", conn.RemoteAddr().String())
 	}
 }
