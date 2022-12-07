@@ -15,6 +15,7 @@ import (
 const MaxFaultyNode = 1
 const TotalNodeNum = 3*MaxFaultyNode + 1
 const MyIPAddr = "1.116.151.179"
+// const MyIPAddr = "152.136.151.161"
 
 // convert crypto.VrfProof([80]byte) to binary string
 func BytesToBinaryString(bs crypto.VrfProof) string {

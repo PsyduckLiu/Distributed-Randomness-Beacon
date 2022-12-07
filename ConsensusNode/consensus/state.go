@@ -176,7 +176,7 @@ func (s *StateEngine) WatchConfig(id int64, sig chan interface{}) {
 
 	// watch config file
 	myViper := viper.New()
-	myViper.SetConfigFile("../Configuration/output.yml")
+	myViper.SetConfigFile("152.136.151.161/output.yml")
 	myViper.WatchConfig()
 	myViper.OnConfigChange(func(e fsnotify.Event) {
 		// lock file
