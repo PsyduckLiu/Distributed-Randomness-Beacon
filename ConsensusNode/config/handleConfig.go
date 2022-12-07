@@ -33,7 +33,7 @@ func WriteOutput(output string) {
 
 	// set config file
 	outputViper := viper.New()
-	outputViper.SetConfigFile("../Configuration/output.yml")
+	outputViper.SetConfigFile("/var/www/html/output.yml")
 
 	// read config and keep origin settings
 	if err := outputViper.ReadInConfig(); err != nil {
