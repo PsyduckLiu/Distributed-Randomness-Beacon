@@ -21,7 +21,7 @@ func main() {
 	}
 
 	if service == 1 {
-
+		Accept()
 	}
 
 }
