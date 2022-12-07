@@ -42,6 +42,7 @@ func main() {
 	}
 
 	res.Body.Close()
+	fmt.Printf("%s", body)
 	fmt.Printf("%s", string(body))
 
 }
