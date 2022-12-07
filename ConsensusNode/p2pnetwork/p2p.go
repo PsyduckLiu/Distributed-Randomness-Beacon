@@ -142,6 +142,14 @@ func (sp *SimpleP2p) monitor(id int64) {
 
 		// add a new node
 		sp.Peers[conn.RemoteAddr().String()] = conn
+
+		// new identity message
+		// send identity message to origin nodes
+		kMsg := message.CreateIdentityMsg(message.MTIdentity, sp.NodeId, sp.PrivateKey)
+		if err := sp.SendUniqueNode(conn, kMsg); err != nil {
+			panic(fmt.Errorf("===>[ERROR from dialTcp]Send Identity message error:%s", err))
+		}
+
 		go sp.waitData(conn)
 	}
 }
