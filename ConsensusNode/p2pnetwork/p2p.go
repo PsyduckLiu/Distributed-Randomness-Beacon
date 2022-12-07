@@ -15,7 +15,6 @@ import (
 	"net"
 	_ "net/http/pprof"
 	"runtime"
-	"strconv"
 	"sync"
 	"time"
 )
@@ -68,10 +67,10 @@ func NewSimpleP2pLib(id int64, msgChan chan<- *message.ConMessage) P2pNetwork {
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from NewSimpleP2pLib]Listen TCP err:%s", err))
 	}
-	fmt.Printf("===>[P2P]Node[%d] is waiting at:%s\n", id, s.Addr().String())
+	fmt.Printf("===>[P2P]Node[%d] is waiting at:%s:%d\n", id, util.MyIPAddr, port)
 
 	// write new node details into config
-	config.NewConsensusNode(id, s.Addr().String(), string(elliptic.Marshal(curve, privateKey.PublicKey.X, privateKey.PublicKey.Y)))
+	// config.NewConsensusNode(id, util.MyIPAddr, string(elliptic.Marshal(curve, privateKey.PublicKey.X, privateKey.PublicKey.Y)))
 
 	sp := &SimpleP2p{
 		NodeId:         id,
@@ -97,17 +96,20 @@ func (sp *SimpleP2p) dialTcp(id int64) {
 	for i := 0; i < len(nodeConfig); i++ {
 		if int64(i) != id && nodeConfig[i].Ip != "0" {
 			// resolve TCP address and dial TCP conn
-			addr, err := net.ResolveTCPAddr("tcp4", nodeConfig[i].Ip)
+			nodeAddr := nodeConfig[i].Ip + ":" + nodeConfig[i].Pk
+			addr, err := net.ResolveTCPAddr("tcp4", nodeAddr)
 			if err != nil {
 				panic(fmt.Errorf("===>[ERROR from dialTcp]Resolve TCP Addr err:%s", err))
 			}
-			addr.Port, err = strconv.Atoi(nodeConfig[i].Pk)
-			if err != nil {
-				panic(fmt.Errorf("===>[ERROR from dialTcp]Resolve TCP Addr Port err:%s", err))
-			}
+			// addr.Port, err = strconv.Atoi(nodeConfig[i].Pk)
+			// if err != nil {
+			// 	panic(fmt.Errorf("===>[ERROR from dialTcp]Resolve TCP Addr Port err:%s", err))
+			// }
 			conn, err := net.DialTCP("tcp", nil, addr)
 			if err != nil {
-				panic(fmt.Errorf("===>[ERROR from dialTcp]DialTCP err:%s", err))
+				// panic(fmt.Errorf("===>[ERROR from dialTcp]DialTCP err:%s", err))
+				fmt.Println("===>[dialTcp]Failed to connect with", addr)
+				continue
 			}
 
 			// get specified curve
