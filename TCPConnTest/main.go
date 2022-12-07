@@ -1,6 +1,7 @@
 package main
 
 import (
+	"TCP/service"
 	"os"
 	"strconv"
 	"time"
@@ -11,17 +12,17 @@ func main() {
 		panic("[Command line arguments]Usage: input id")
 	}
 
-	service, _ := strconv.Atoi(os.Args[1])
+	role, _ := strconv.Atoi(os.Args[1])
 
-	if service == 0 {
+	if role == 0 {
 		for i := 0; i < 10; i++ {
 			time.Sleep(10 * time.Millisecond)
-			SendMessage("hello" + string(rune(i)))
+			service.SendMessage("hello" + string(rune(i)))
 		}
 	}
 
-	if service == 1 {
-		Accept()
+	if role == 1 {
+		service.Accept()
 	}
 
 }
