@@ -18,6 +18,7 @@ func Accept() {
 	}
 	fmt.Printf("===>[P2P]Node is waiting at:%s\n", s.Addr().String())
 
+	buf := make([]byte, 8192)
 	for {
 		conn, err := s.AcceptTCP()
 
@@ -28,15 +29,6 @@ func Accept() {
 			}
 			continue
 		}
-
-		fmt.Printf("===>[P2P]P2p network accept success:%s\n", conn.RemoteAddr().String())
-		go waitData(conn)
-	}
-}
-
-func waitData(conn *net.TCPConn) {
-	buf := make([]byte, 8192)
-	for {
 		n, err := conn.Read(buf)
 
 		if err != nil {
@@ -51,5 +43,6 @@ func waitData(conn *net.TCPConn) {
 		fmt.Println("read from", conn.RemoteAddr().String(), time.Now())
 		fmt.Println("Message contains:")
 		fmt.Println(buf[:n])
+		fmt.Printf("===>[P2P]P2p network accept success:%s\n", conn.RemoteAddr().String())
 	}
 }

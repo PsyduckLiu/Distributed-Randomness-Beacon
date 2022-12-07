@@ -16,7 +16,7 @@ func main() {
 
 	if role == 0 {
 		for i := 0; i < 10; i++ {
-			time.Sleep(10 * time.Millisecond)
+			time.Sleep(500 * time.Millisecond)
 			service.SendMessage("hello" + string(rune(i)))
 		}
 	}
