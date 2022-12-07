@@ -79,22 +79,6 @@ func (s *StateEngine) RevealTC(msg *message.ConMessage) (err error) {
 				writeTotalTimeFile(totalTimeArray)
 				writeVerifyTimeFile(verifyTimeArray)
 			}
-			if RevealNum == 22 {
-				writeTotalTimeFile(totalTimeArray)
-				writeVerifyTimeFile(verifyTimeArray)
-			}
-			if RevealNum == 32 {
-				writeTotalTimeFile(totalTimeArray)
-				writeVerifyTimeFile(verifyTimeArray)
-			}
-			if RevealNum == 42 {
-				writeTotalTimeFile(totalTimeArray)
-				writeVerifyTimeFile(verifyTimeArray)
-			}
-			if RevealNum == 52 {
-				writeTotalTimeFile(totalTimeArray)
-				writeVerifyTimeFile(verifyTimeArray)
-			}
 
 			time.Sleep(5 * time.Second)
 			config.WriteOutput(s.Result.String())

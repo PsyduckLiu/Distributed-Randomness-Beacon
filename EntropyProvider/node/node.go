@@ -165,8 +165,18 @@ func sendVRFMsg(ecdsaSK *ecdsa.PrivateKey, vrfSK crypto.VrfPrivkey, vrfResult cr
 	nodeConfig := config.GetConsensusNode()
 	for i := 0; i < len(nodeConfig); i++ {
 		time.Sleep(100 * time.Millisecond)
+
 		// dial remote TCP port
-		conn, err := net.DialTCP("tcp", nil, &net.TCPAddr{Port: util.EntropyPortByID(i)})
+		addr, err := net.ResolveTCPAddr("tcp4", nodeConfig[i].Ip)
+		if err != nil {
+			panic(fmt.Errorf("===>[ERROR from dialTcp]Resolve TCP Addr err:%s", err))
+		}
+		addr.Port, err = strconv.Atoi(nodeConfig[i].Pk)
+		if err != nil {
+			panic(fmt.Errorf("===>[ERROR from dialTcp]Resolve TCP Addr Port err:%s", err))
+		}
+
+		conn, err := net.DialTCP("tcp", nil, addr)
 		if err != nil {
 			fmt.Println(time.Now())
 			fmt.Println("===>[Fail from sendVRFMsg]Dial tcp err:", err)
@@ -206,7 +216,16 @@ func sendTCMsg(ecdsaSK *ecdsa.PrivateKey, id int64, cMarshal []byte, hMarshal []
 		time.Sleep(50 * time.Millisecond)
 
 		// dial remote TCP port
-		conn, err := net.DialTCP("tcp", nil, &net.TCPAddr{Port: util.EntropyPortByID(i)})
+		addr, err := net.ResolveTCPAddr("tcp4", nodeConfig[i].Ip)
+		if err != nil {
+			panic(fmt.Errorf("===>[ERROR from dialTcp]Resolve TCP Addr err:%s", err))
+		}
+		addr.Port, err = strconv.Atoi(nodeConfig[i].Pk)
+		if err != nil {
+			panic(fmt.Errorf("===>[ERROR from dialTcp]Resolve TCP Addr Port err:%s", err))
+		}
+
+		conn, err := net.DialTCP("tcp", nil, addr)
 		if err != nil {
 			fmt.Println(time.Now())
 			fmt.Println("===>[Fail from sendTCMsg]Dial tcp err:", err)

@@ -1,6 +1,6 @@
 #!/bin/bash
 cd ../ConsensusNode
-for i in $(seq 0 6)
+for i in $(seq 0 1)
 do
 go run main.go $i > result/result$i.txt &
 sleep 1
@@ -25,7 +25,7 @@ done
 sleep 5
 
 cd ../EntropyProvider
-for i in $(seq 0 9)
+for i in $(seq 0 4)
 do
 go run main.go $i > result/result$i.txt &
 sleep 2

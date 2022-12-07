@@ -15,6 +15,7 @@ import (
 	"net"
 	_ "net/http/pprof"
 	"runtime"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -99,6 +100,10 @@ func (sp *SimpleP2p) dialTcp(id int64) {
 			addr, err := net.ResolveTCPAddr("tcp4", nodeConfig[i].Ip)
 			if err != nil {
 				panic(fmt.Errorf("===>[ERROR from dialTcp]Resolve TCP Addr err:%s", err))
+			}
+			addr.Port, err = strconv.Atoi(nodeConfig[i].Pk)
+			if err != nil {
+				panic(fmt.Errorf("===>[ERROR from dialTcp]Resolve TCP Addr Port err:%s", err))
 			}
 			conn, err := net.DialTCP("tcp", nil, addr)
 			if err != nil {
