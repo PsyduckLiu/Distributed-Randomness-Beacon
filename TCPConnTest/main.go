@@ -2,6 +2,7 @@ package main
 
 import (
 	"TCP/service"
+	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -46,10 +47,8 @@ func main() {
 	fmt.Printf("%s", string(body))
 
 	output := strings.Fields(string(body))
-	fmt.Println(output[2])
-	fmt.Println([]byte(output[2]))
-	fmt.Println(fmt.Sprintf("%x", output[2]))
+	fmt.Println(output[1])
+	fmt.Println([]byte(output[1]))
 
-	var outputByte = []byte{163, 21, 8, 11, 1, 48, 243, 41, 213, 5, 105, 232, 145, 84, 65, 196, 85, 10, 23, 209, 244, 161, 97, 143, 133, 131, 190, 189, 240, 39, 180, 59}
-	fmt.Println(string(outputByte))
+	fmt.Println(hex.DecodeString(output[1]))
 }
