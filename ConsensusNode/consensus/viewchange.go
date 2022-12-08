@@ -90,7 +90,8 @@ func (s *StateEngine) procViewChange(msg *message.ConMessage) error {
 
 	// get specified curve
 	marshalledCurve := config.GetCurve()
-	pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
+	pubZip, err := util.Decode([]byte(marshalledCurve))
+	pub, err := x509.ParsePKIXPublicKey(pubZip)
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from ViewChange]Parse elliptic curve error:%s", err))
 	}
@@ -114,7 +115,8 @@ func (s *StateEngine) procViewChange(msg *message.ConMessage) error {
 
 	// unmarshal message
 	vc := &message.ViewChange{}
-	if err := json.Unmarshal(msg.Payload, vc); err != nil {
+	vMsgZip, err := util.Decode(msg.Payload)
+	if err := json.Unmarshal(vMsgZip, vc); err != nil {
 		panic(fmt.Errorf("===>[ERROR from ViewChange]Invalid[%s] ViewChange message[%s]", err, msg))
 	}
 
@@ -174,7 +176,8 @@ func (s *StateEngine) didChangeView(msg *message.ConMessage) error {
 
 	// get specified curve
 	marshalledCurve := config.GetCurve()
-	pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
+	pubZip, err := util.Decode([]byte(marshalledCurve))
+	pub, err := x509.ParsePKIXPublicKey(pubZip)
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from didChangeView]Parse elliptic curve error:%s", err))
 	}
@@ -198,7 +201,8 @@ func (s *StateEngine) didChangeView(msg *message.ConMessage) error {
 
 	// unmarshal message
 	nv := &message.NewView{}
-	if err := json.Unmarshal(msg.Payload, nv); err != nil {
+	nMsgZip, err := util.Decode(msg.Payload)
+	if err := json.Unmarshal(nMsgZip, nv); err != nil {
 		panic(fmt.Errorf("===>[ERROR from didChangeView]Invalid[%s] Propose message[%s]", err, msg))
 	}
 

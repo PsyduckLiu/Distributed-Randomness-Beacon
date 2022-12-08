@@ -29,7 +29,8 @@ func (s *StateEngine) RevealTC(msg *message.ConMessage) (err error) {
 
 	// get specified curve
 	marshalledCurve := config.GetCurve()
-	pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
+	pubZip, err := util.Decode([]byte(marshalledCurve))
+	pub, err := x509.ParsePKIXPublicKey(pubZip)
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from RevealTC]Parse elliptic curve error:%s", err))
 	}
@@ -52,7 +53,8 @@ func (s *StateEngine) RevealTC(msg *message.ConMessage) (err error) {
 
 	// unmarshal message
 	result := new(string)
-	if err := json.Unmarshal(msg.Payload, result); err != nil {
+	rMsgZip, err := util.Decode(msg.Payload)
+	if err := json.Unmarshal(rMsgZip, result); err != nil {
 		panic(fmt.Errorf("===>[ERROR from RevealTC]Invalid[%s] Reveal message[%s]", err, msg))
 	}
 

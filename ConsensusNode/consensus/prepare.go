@@ -27,7 +27,8 @@ func (s *StateEngine) PrepareTC(msg *message.ConMessage) (err error) {
 
 	// get specified curve
 	marshalledCurve := config.GetCurve()
-	pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
+	pubZip, err := util.Decode([]byte(marshalledCurve))
+	pub, err := x509.ParsePKIXPublicKey(pubZip)
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from PrepareTC]Parse elliptic curve error:%s", err))
 	}
@@ -50,7 +51,8 @@ func (s *StateEngine) PrepareTC(msg *message.ConMessage) (err error) {
 
 	// unmarshal message
 	Prepare := &message.Prepare{}
-	if err := json.Unmarshal(msg.Payload, Prepare); err != nil {
+	pMsgZip, err := util.Decode(msg.Payload)
+	if err := json.Unmarshal(pMsgZip, Prepare); err != nil {
 		panic(fmt.Errorf("===>[ERROR from PrepareTC]Invalid[%s] Prepare message[%s]", err, msg))
 	}
 

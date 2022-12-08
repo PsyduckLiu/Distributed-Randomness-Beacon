@@ -46,7 +46,8 @@ type SimpleP2p struct {
 func NewSimpleP2pLib(id int64, msgChan chan<- *message.ConMessage) P2pNetwork {
 	// get specified curve
 	marshalledCurve := config.GetCurve()
-	pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
+	pubZip, err := util.Decode([]byte(marshalledCurve))
+	pub, err := x509.ParsePKIXPublicKey(pubZip)
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from NewSimpleP2pLib]Parse elliptic curve error:%s", err))
 	}
@@ -180,7 +181,8 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 		// handle a consensus message
 		conMsg := &message.ConMessage{}
 		fmt.Println("read from", conn.RemoteAddr().String(), time.Now())
-		if err := json.Unmarshal(buf[:n], conMsg); err != nil {
+		cMsgZip, err := util.Decode(buf[:n])
+		if err := json.Unmarshal(cMsgZip, conMsg); err != nil {
 			fmt.Println(string(buf[:n]))
 			panic(fmt.Errorf("===>[ERROR from waitData]Unmarshal data err:%s", err))
 		}
@@ -191,7 +193,8 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 			nodeConfig := config.GetConsensusNode()
 
 			// unmarshal public key
-			pub, err := x509.ParsePKIXPublicKey([]byte(conMsg.Payload))
+			pubZip, err := util.Decode([]byte(conMsg.Payload))
+			pub, err := x509.ParsePKIXPublicKey(pubZip)
 			if err != nil {
 				panic(fmt.Errorf("===>[ERROR from waitData]Parse public key error:%s", err))
 			}
@@ -244,13 +247,14 @@ func (sp *SimpleP2p) BroadCast(v interface{}) error {
 	}
 
 	data, err := json.Marshal(v)
+	dataZip, err := util.Encode(data)
 	if err != nil {
 		return fmt.Errorf("===>[ERROR from BroadCast]Marshal data err:%s", err)
 	}
 
 	for name, conn := range sp.Peers {
 		time.Sleep(100 * time.Millisecond)
-		go WriteTCP(conn, data, name)
+		go WriteTCP(conn, dataZip, name)
 	}
 
 	return nil
@@ -263,11 +267,12 @@ func (sp *SimpleP2p) SendUniqueNode(conn *net.TCPConn, v interface{}) error {
 	}
 
 	data, err := json.Marshal(v)
+	dataZip, err := util.Encode(data)
 	if err != nil {
 		return fmt.Errorf("===>[ERROR from SendUniqueNode]Marshal data err:%s", err)
 	}
 
-	go WriteTCP(conn, data, conn.RemoteAddr().String())
+	go WriteTCP(conn, dataZip, conn.RemoteAddr().String())
 
 	return nil
 }

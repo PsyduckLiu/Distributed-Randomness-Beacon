@@ -59,7 +59,8 @@ func (s *StateEngine) unionTC(msg *message.ConMessage) (err error) {
 
 	// get specified curve
 	marshalledCurve := config.GetCurve()
-	pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
+	pubZip, err := util.Decode([]byte(marshalledCurve))
+	pub, err := x509.ParsePKIXPublicKey(pubZip)
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from unionTC]Parse elliptic curve error:%s", err))
 	}
@@ -82,7 +83,8 @@ func (s *StateEngine) unionTC(msg *message.ConMessage) (err error) {
 
 	// unmarshal message
 	Collect := &message.Collect{}
-	if err := json.Unmarshal(msg.Payload, Collect); err != nil {
+	cMsgZip, err := util.Decode(msg.Payload)
+	if err := json.Unmarshal(cMsgZip, Collect); err != nil {
 		panic(fmt.Errorf("===>[ERROR from unionTC]Invalid[%s] Union message[%s]", err, msg))
 	}
 	fmt.Printf("===>[Union]Collect(Union) Message from Node[%d],length is %d\n", msg.From, Collect.Length)

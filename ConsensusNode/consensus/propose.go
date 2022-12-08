@@ -21,7 +21,8 @@ func (s *StateEngine) ProposeTC(msg *message.ConMessage) (err error) {
 
 	// get specified curve
 	marshalledCurve := config.GetCurve()
-	pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
+	pubZip, err := util.Decode([]byte(marshalledCurve))
+	pub, err := x509.ParsePKIXPublicKey(pubZip)
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from ProposeTC]Parse elliptic curve error:%s", err))
 	}
@@ -44,7 +45,8 @@ func (s *StateEngine) ProposeTC(msg *message.ConMessage) (err error) {
 
 	// unmarshal message
 	Propose := &message.Propose{}
-	if err := json.Unmarshal(msg.Payload, Propose); err != nil {
+	pMsgZip, err := util.Decode(msg.Payload)
+	if err := json.Unmarshal(pMsgZip, Propose); err != nil {
 		panic(fmt.Errorf("===>[ERROR from ProposeTC]Invalid[%s] Propose message[%s]", err, msg))
 	}
 	fmt.Printf("===>[Propose]Propose Message from Node[%d],length is %d\n", msg.From, Propose.Length)
