@@ -75,14 +75,14 @@ func (s *StateEngine) unionTC(msg *message.ConMessage) (err error) {
 	}
 
 	// verify signature
-	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
+	cMsgZip, err := util.Decode(msg.Payload)
+	verify := signature.VerifySig(cMsgZip, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from unionTC]Verify new public key Signature failed, From Node[%d]", msg.From))
 	}
 
 	// unmarshal message
 	Collect := &message.Collect{}
-	cMsgZip, err := util.Decode(msg.Payload)
 	if err := json.Unmarshal(cMsgZip, Collect); err != nil {
 		panic(fmt.Errorf("===>[ERROR from unionTC]Invalid[%s] Union message[%s]", err, msg))
 	}

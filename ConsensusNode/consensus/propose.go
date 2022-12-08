@@ -37,14 +37,14 @@ func (s *StateEngine) ProposeTC(msg *message.ConMessage) (err error) {
 	}
 
 	// verify signature
-	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
+	pMsgZip, err := util.Decode(msg.Payload)
+	verify := signature.VerifySig(pMsgZip, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from ProposeTC]Verify new public key Signature failed, From Node[%d]", msg.From))
 	}
 
 	// unmarshal message
 	Propose := &message.Propose{}
-	pMsgZip, err := util.Decode(msg.Payload)
 	if err := json.Unmarshal(pMsgZip, Propose); err != nil {
 		panic(fmt.Errorf("===>[ERROR from ProposeTC]Invalid[%s] Propose message[%s]", err, msg))
 	}
