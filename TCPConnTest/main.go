@@ -4,11 +4,9 @@ import (
 	"TCP/service"
 	"fmt"
 	"io/ioutil"
-	"math/big"
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 )
 
 func main() {
@@ -44,17 +42,7 @@ func main() {
 	}
 
 	res.Body.Close()
-
-	output := strings.Fields(string(body))
-	var primes []*big.Int
-	prime0 := new(big.Int)
-	prime0.SetString(strings.Trim(output[32], "\""), 10)
-	primes = append(primes, prime0)
-	prime1 := new(big.Int)
-	prime1.SetString(strings.Trim(output[34], "\""), 10)
-	primes = append(primes, prime1)
-	fmt.Println(prime0)
-	fmt.Println(prime1)
+	fmt.Println(body)
 
 	// fmt.Println(N)
 	// outputByte, err := hex.DecodeString(output[1])
