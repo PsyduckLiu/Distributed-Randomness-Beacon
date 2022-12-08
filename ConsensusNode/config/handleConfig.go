@@ -233,12 +233,7 @@ func GetConsensusNode() []NodeConfig {
 	for i := 0; i < util.TotalNodeNum; i++ {
 		var node NodeConfig
 		node.Ip = output[i*4+7]
-
-		pk, err := hex.DecodeString(output[i*4+9])
-		if err != nil {
-			panic(fmt.Errorf("===>[ERROR from GetConsensusNode]get pk:%s", err))
-		}
-		node.Pk = string(pk)
+		node.Pk = output[i*4+9]
 		nodeConfig = append(nodeConfig, node)
 	}
 
