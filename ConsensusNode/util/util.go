@@ -5,7 +5,10 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/algorand/go-algorand/crypto"
@@ -15,6 +18,7 @@ import (
 const MaxFaultyNode = 1
 const TotalNodeNum = 3*MaxFaultyNode + 1
 const MyIPAddr = "1.116.151.179"
+
 // const MyIPAddr = "152.136.151.161"
 
 // convert crypto.VrfProof([80]byte) to binary string
@@ -63,4 +67,27 @@ func WriteResult(output string) {
 	write.WriteString(output + "\n")
 
 	write.Flush()
+}
+
+func ReadOutput() string {
+	res, err := http.Get("http://152.136.151.161/output.yml")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
+	}
+
+	res.Body.Close()
+	fmt.Printf("%s", string(body))
+
+	output := strings.Fields(string(body))
+	// outputByte, err := hex.DecodeString(output[1])
+
+	// return string(outputByte)
+	return output[1]
 }

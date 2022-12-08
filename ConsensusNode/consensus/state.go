@@ -5,19 +5,16 @@ import (
 	"consensusNode/message"
 	"consensusNode/p2pnetwork"
 	"consensusNode/util"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/big"
 	"net"
-	"os"
 	"strconv"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/algorand/go-algorand/crypto"
-	"github.com/fsnotify/fsnotify"
-	"github.com/spf13/viper"
 )
 
 const MaxStateMsgNO = 150
@@ -104,7 +101,7 @@ func (s *StateEngine) WriteRandomReveal() {
 	message := []byte("hello world")
 	randomNum := util.Digest(message)
 
-	config.WriteOutput(string(randomNum))
+	config.WriteOutput(hex.EncodeToString(randomNum))
 }
 
 // receive and handle consensus message
@@ -171,27 +168,14 @@ func (s *StateEngine) StartConsensus(sig chan interface{}) {
 // when [previousReveal] in Reveal.yml changes, consensus node starts a new round
 func (s *StateEngine) WatchConfig(id int64, sig chan interface{}) {
 	// get the earliest Reveal written in Output.yml
-	previousReveal := string(config.GetPreviousOutput())
+	previousReveal := config.GetPreviousOutput()
 	fmt.Println("\n===>[Watching]The earliest Reveal is", previousReveal)
 
-	// watch config file
-	myViper := viper.New()
-	myViper.SetConfigFile("152.136.151.161/output.yml")
-	myViper.WatchConfig()
-	myViper.OnConfigChange(func(e fsnotify.Event) {
-		// lock file
-		f, err := os.Open("../lock")
-		if err != nil {
-			panic(fmt.Errorf("===>[ERROR from WatchConfig]Open lock failed:%s", err))
-		}
-		// share lock, concurrently read
-		if err := syscall.Flock(int(f.Fd()), syscall.LOCK_SH); err != nil {
-			panic(fmt.Errorf("===>[ERROR from WatchConfig]Add share lock failed:%s", err))
-		}
-		fmt.Println("===>[Watching]Configuration Changed", time.Now())
+	for {
+		time.Sleep(1 * time.Second)
 
 		// when new Reveal comes, entropy node starts calculating VRF and sending TC
-		newReveal := string(config.GetPreviousOutput())
+		newReveal := config.GetPreviousOutput()
 		if previousReveal != newReveal && newReveal != "" && s.stage == CommitFromEntropy {
 			startTime = time.Now()
 			fmt.Println("\n===>[Watching]Start time is", startTime)
@@ -235,12 +219,75 @@ func (s *StateEngine) WatchConfig(id int64, sig chan interface{}) {
 			// 	s.CollectTimer.tick(1 * time.Second)
 			// }
 		}
+	}
 
-		// unlock file
-		if err := syscall.Flock(int(f.Fd()), syscall.LOCK_UN); err != nil {
-			panic(fmt.Errorf("===>[ERROR from WatchConfig]Unlock share lock failed:%s", err))
-		}
-	})
+	// watch config file
+	// myViper := viper.New()
+	// myViper.SetConfigFile("152.136.151.161/output.yml")
+	// myViper.WatchConfig()
+	// myViper.OnConfigChange(func(e fsnotify.Event) {
+	// 	// lock file
+	// 	f, err := os.Open("../lock")
+	// 	if err != nil {
+	// 		panic(fmt.Errorf("===>[ERROR from WatchConfig]Open lock failed:%s", err))
+	// 	}
+	// 	// share lock, concurrently read
+	// 	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_SH); err != nil {
+	// 		panic(fmt.Errorf("===>[ERROR from WatchConfig]Add share lock failed:%s", err))
+	// 	}
+	// 	fmt.Println("===>[Watching]Configuration Changed", time.Now())
+
+	// 	// when new Reveal comes, entropy node starts calculating VRF and sending TC
+	// 	newReveal := string(config.GetPreviousOutput())
+	// 	if previousReveal != newReveal && newReveal != "" && s.stage == CommitFromEntropy {
+	// 		startTime = time.Now()
+	// 		fmt.Println("\n===>[Watching]Start time is", startTime)
+	// 		fmt.Println("\n===>[Watching]Reveal changed,new Reveal is", newReveal)
+	// 		previousReveal = newReveal
+
+	// 		// initialize a series of variales
+	// 		s.stage = CommitFromEntropy
+	// 		s.RevealNum = 0
+	// 		s.PrepareNum = 0
+	// 		s.CollectNum = 0
+	// 		s.ProposeNum = 0
+	// 		s.VerifyTime = 0.0
+	// 		s.quit = make(chan bool)
+	// 		s.entropyNode = make(map[int64]bool)
+	// 		s.TimeCommitment = make(map[string][4]string)
+	// 		s.TimeCommitmentCollect = make(map[int64]int)
+	// 		s.TimeCommitmentPropose = make(map[string]bool)
+	// 		s.TimeCommitmentProof = make(map[string][4]string)
+
+	// 		// listen the srvHub and set a deadline
+	// 		if s.SrvHub == nil {
+	// 			locAddr := net.TCPAddr{
+	// 				Port: util.EntropyPortByID(id),
+	// 			}
+	// 			srvHub, err := net.ListenTCP("tcp4", &locAddr)
+	// 			if err != nil {
+	// 				panic(fmt.Errorf("===>[ERROR from WatchConfig]Listen TCP port failed:%s", err))
+	// 			}
+	// 			s.SrvHub = srvHub
+	// 		}
+	// 		s.SrvHub.SetDeadline(time.Now().Add(10 * time.Second))
+
+	// 		// wait for TC messages from entropy nodes
+	// 		go s.WaitTC(sig, s.quit)
+
+	// 		// start 3 timers for a new round
+	// 		s.GlobalTimer.tick(10 * time.Minute)
+	// 		s.CommitFromEntropyTimer.tick(10 * time.Second)
+	// 		// if s.NodeID == s.PrimaryID {
+	// 		// 	s.CollectTimer.tick(1 * time.Second)
+	// 		// }
+	// 	}
+
+	// 	// unlock file
+	// 	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_UN); err != nil {
+	// 		panic(fmt.Errorf("===>[ERROR from WatchConfig]Unlock share lock failed:%s", err))
+	// 	}
+	// })
 }
 
 // wait for TC messages from entropy nodes

@@ -117,7 +117,7 @@ func (s *StateEngine) handleTC() (err error) {
 	}
 
 	time.Sleep(5 * time.Second)
-	config.WriteOutput(s.Result.String())
+	// config.WriteOutput(s.Result.String())
 	fmt.Println("\n===>[Reveal]Reveal time is", time.Now())
 
 	return

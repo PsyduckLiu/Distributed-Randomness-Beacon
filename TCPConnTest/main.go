@@ -50,5 +50,6 @@ func main() {
 	fmt.Println(output[1])
 	fmt.Println([]byte(output[1]))
 
-	fmt.Println(hex.DecodeString(output[1]))
+	outputByte,err := hex.DecodeString(output[1])
+	fmt.Println(string(outputByte))
 }

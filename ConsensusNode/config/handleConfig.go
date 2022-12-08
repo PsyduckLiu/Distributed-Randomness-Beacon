@@ -85,15 +85,16 @@ func GetCurve() string {
 // get previous output from config file
 func GetPreviousOutput() string {
 	// set config file
-	outputViper := viper.New()
-	outputViper.SetConfigFile("/var/www/html/output.yml")
+	// outputViper := viper.New()
+	// outputViper.SetConfigFile("/var/www/html/output.yml")
 	// outputViper.SetConfigFile("http://152.136.151.161/output.yml")
 
-	if err := outputViper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("===>[ERROR from GetPreviousOutput]Read config file failed:%s", err))
-	}
+	// if err := outputViper.ReadInConfig(); err != nil {
+	// 	panic(fmt.Errorf("===>[ERROR from GetPreviousOutput]Read config file failed:%s", err))
+	// }
 
-	return outputViper.GetString("PreviousOutput")
+	// return outputViper.GetString("PreviousOutput")
+	return util.ReadOutput()
 }
 
 // write new id-ip-pk into config
@@ -211,8 +212,8 @@ func ReadConfig() {
 	// set config file
 	configViper := viper.New()
 	configViper.SetConfigFile("../Configuration/config.yml")
-	outputViper := viper.New()
-	outputViper.SetConfigFile("http://152.136.151.161/output.yml")
+	// outputViper := viper.New()
+	// outputViper.SetConfigFile("http://152.136.151.161/output.yml")
 
 	if err := configViper.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("===>[ERROR from ReadConfig]Read config file failed:%s", err))
@@ -224,7 +225,8 @@ func ReadConfig() {
 	fmt.Printf("\nReading Configuration:\n")
 	fmt.Printf("Running:%v\n", configViper.GetString("Running"))
 	fmt.Printf("Version:%s\n", configViper.GetString("Version"))
-	fmt.Printf("PreviousOutput:%s\n", outputViper.GetString("PreviousOutput"))
+	// fmt.Printf("PreviousOutput:%s\n", outputViper.GetString("PreviousOutput"))
+	fmt.Printf("PreviousOutput:%s\n", util.ReadOutput())
 	fmt.Printf("EllipticCurve:%v\n", configViper.GetString("EllipticCurve"))
 	fmt.Printf("Consensusnodes:\n")
 }
