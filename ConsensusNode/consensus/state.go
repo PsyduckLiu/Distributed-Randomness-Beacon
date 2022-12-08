@@ -230,7 +230,7 @@ func (s *StateEngine) WaitTC(sig chan interface{}, quit chan bool) {
 		}
 	}()
 
-	buf := make([]byte, 16384)
+	buf := make([]byte, 4096)
 	for {
 		select {
 		case <-quit:
@@ -252,7 +252,7 @@ func (s *StateEngine) WaitTC(sig chan interface{}, quit chan bool) {
 			msgFromEntropyNode := &message.ConMessage{}
 			eMsgZip, err := util.Decode(buf[:n])
 			if err := json.Unmarshal(eMsgZip, msgFromEntropyNode); err != nil {
-				fmt.Println(string(buf[:n]))
+				fmt.Println(eMsgZip)
 				fmt.Printf("===>[ERROR from WaitTC]Message parse failed:%s", err)
 				continue
 			}

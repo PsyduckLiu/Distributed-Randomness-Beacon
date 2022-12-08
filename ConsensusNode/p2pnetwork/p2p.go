@@ -159,7 +159,7 @@ func (sp *SimpleP2p) monitor(id int64) {
 
 // remove old node AND deliver consensus mseeage by [MsgChan]
 func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
-	buf := make([]byte, 16384)
+	buf := make([]byte, 4096)
 	for {
 		n, err := conn.Read(buf)
 
@@ -182,7 +182,7 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 		fmt.Println("read from", conn.RemoteAddr().String(), time.Now())
 		cMsgZip, err := util.Decode(buf[:n])
 		if err := json.Unmarshal(cMsgZip, conMsg); err != nil {
-			fmt.Println(string(buf[:n]))
+			fmt.Println(cMsgZip)
 			panic(fmt.Errorf("===>[ERROR from waitData]Unmarshal data err:%s", err))
 		}
 
