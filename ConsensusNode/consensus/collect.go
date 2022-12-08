@@ -76,7 +76,7 @@ func (s *StateEngine) unionTC(msg *message.ConMessage) (err error) {
 
 	// verify signature
 	cMsgZip, err := util.Decode(msg.Payload)
-	verify := signature.VerifySig(cMsgZip, msg.Sig, newPublicKey)
+	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from unionTC]Verify new public key Signature failed, From Node[%d]", msg.From))
 	}

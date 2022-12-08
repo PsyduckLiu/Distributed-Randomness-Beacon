@@ -38,7 +38,7 @@ func (s *StateEngine) ProposeTC(msg *message.ConMessage) (err error) {
 
 	// verify signature
 	pMsgZip, err := util.Decode(msg.Payload)
-	verify := signature.VerifySig(pMsgZip, msg.Sig, newPublicKey)
+	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from ProposeTC]Verify new public key Signature failed, From Node[%d]", msg.From))
 	}

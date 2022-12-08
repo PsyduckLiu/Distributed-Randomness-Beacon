@@ -107,7 +107,7 @@ func (s *StateEngine) procViewChange(msg *message.ConMessage) error {
 
 	// verify signature
 	vMsgZip, err := util.Decode(msg.Payload)
-	verify := signature.VerifySig(vMsgZip, msg.Sig, newPublicKey)
+	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from ViewChange]Verify new public key Signature failed, From Node[%d]", msg.From))
 	}
@@ -193,7 +193,7 @@ func (s *StateEngine) didChangeView(msg *message.ConMessage) error {
 
 	// verify signature
 	nMsgZip, err := util.Decode(msg.Payload)
-	verify := signature.VerifySig(nMsgZip, msg.Sig, newPublicKey)
+	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from didChangeView]Verify new public key Signature failed, From Node[%d]", msg.From))
 	}

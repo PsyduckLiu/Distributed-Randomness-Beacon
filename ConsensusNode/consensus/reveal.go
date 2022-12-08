@@ -46,7 +46,7 @@ func (s *StateEngine) RevealTC(msg *message.ConMessage) (err error) {
 
 	// verify signature
 	rMsgZip, err := util.Decode(msg.Payload)
-	verify := signature.VerifySig(rMsgZip, msg.Sig, newPublicKey)
+	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from RevealTC]Verify new public key Signature failed, From Node[%d]", msg.From))
 	}
