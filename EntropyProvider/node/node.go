@@ -234,6 +234,7 @@ func sendVRFMsg(ecdsaSK *ecdsa.PrivateKey, vrfSK crypto.VrfPrivkey, vrfResult cr
 		if err != nil {
 			panic(fmt.Errorf("===>[ERROR from dialTcp]Resolve TCP Addr err:%s", err))
 		}
+		addr.Port = util.EntropyPortByID(i)
 
 		conn, err := net.DialTCP("tcp", nil, addr)
 		if err != nil {
@@ -279,6 +280,7 @@ func sendTCMsg(ecdsaSK *ecdsa.PrivateKey, id int64, cMarshal []byte, hMarshal []
 		if err != nil {
 			panic(fmt.Errorf("===>[ERROR from dialTcp]Resolve TCP Addr err:%s", err))
 		}
+		addr.Port = util.EntropyPortByID(i)
 
 		conn, err := net.DialTCP("tcp", nil, addr)
 		if err != nil {
