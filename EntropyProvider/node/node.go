@@ -164,7 +164,6 @@ func sendVRFMsg(ecdsaSK *ecdsa.PrivateKey, vrfSK crypto.VrfPrivkey, vrfResult cr
 			panic(fmt.Errorf("===>[ERROR from sendVRFMsg]Marshal consensus message failed:%s", err))
 		}
 		fmt.Println("===>[Sending]Length of marshalled consensus VRF message is:", len(bs))
-		fmt.Println(string(bs))
 
 		go WriteTCP(i, conn, bs)
 	}
@@ -211,6 +210,7 @@ func sendTCMsg(ecdsaSK *ecdsa.PrivateKey, id int64, cMarshal []byte, hMarshal []
 			panic(fmt.Errorf("===>[ERROR from sendTCMsg]Marshal consensus message failed:%s", err))
 		}
 		fmt.Println("===>[Sending]Length of marshalled consensus TC message is:", len(bs))
+		fmt.Println(string(bs))
 
 		go WriteTCP(i, conn, bs)
 	}
