@@ -72,7 +72,9 @@ func NewSimpleP2pLib(id int64, msgChan chan<- *message.ConMessage) P2pNetwork {
 	fmt.Printf("===>[P2P]Node[%d] is waiting at:%s:%d\n", id, util.MyIPAddr, port)
 
 	// write new node details into config
-	config.NewConsensusNode(id, util.MyIPAddr+":"+strconv.FormatInt(int64(port), 10), hex.EncodeToString(elliptic.Marshal(curve, privateKey.PublicKey.X, privateKey.PublicKey.Y)))
+	if id == 0 {
+		config.NewConsensusNode(id, util.MyIPAddr+":"+strconv.FormatInt(int64(port), 10), hex.EncodeToString(elliptic.Marshal(curve, privateKey.PublicKey.X, privateKey.PublicKey.Y)))
+	}
 
 	sp := &SimpleP2p{
 		NodeId:         id,
@@ -210,7 +212,9 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 			sp.mutex.Unlock()
 
 			// write new node details into config
-			config.NewConsensusNode(conMsg.From, nodeConfig[conMsg.From].Ip, hex.EncodeToString(elliptic.Marshal(newPublicKey.Curve, newPublicKey.X, newPublicKey.Y)))
+			if sp.NodeId == 0 {
+				config.NewConsensusNode(conMsg.From, nodeConfig[conMsg.From].Ip, hex.EncodeToString(elliptic.Marshal(newPublicKey.Curve, newPublicKey.X, newPublicKey.Y)))
+			}
 
 			fmt.Printf("===>[P2P]Get new public key from Node[%d], IP[%s]\n", conMsg.From, conn.RemoteAddr().String())
 			fmt.Printf("===>[P2P]Node[%d<=>%d]Connected=[%s<=>%s]\n", sp.NodeId, conMsg.From, conn.LocalAddr().String(), conn.RemoteAddr().String())

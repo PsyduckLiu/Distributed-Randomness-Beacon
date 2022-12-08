@@ -2,9 +2,13 @@ package config
 
 import (
 	"consensusNode/util"
+	"encoding/hex"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"syscall"
 
 	"github.com/spf13/viper"
@@ -56,47 +60,6 @@ func WriteOutput(output string) {
 	}
 }
 
-// get difficulty from config file
-func GetDifficulty() int {
-	// set config file
-	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/config.yml")
-
-	if err := configViper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("===>[ERROR from GetDifficulty]Read config file failed:%s", err))
-	}
-
-	return configViper.GetInt("Difficulty")
-}
-
-// get curve from config file
-func GetCurve() string {
-	// set config file
-	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/config.yml")
-
-	if err := configViper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("===>[ERROR from GetCurve]Read config file failed:%s", err))
-	}
-
-	return configViper.GetString("EllipticCurve")
-}
-
-// get previous output from config file
-func GetPreviousOutput() string {
-	// set config file
-	// outputViper := viper.New()
-	// outputViper.SetConfigFile("/var/www/html/output.yml")
-	// outputViper.SetConfigFile("http://152.136.151.161/output.yml")
-
-	// if err := outputViper.ReadInConfig(); err != nil {
-	// 	panic(fmt.Errorf("===>[ERROR from GetPreviousOutput]Read config file failed:%s", err))
-	// }
-
-	// return outputViper.GetString("PreviousOutput")
-	return ReadOutput()
-}
-
 // write new id-ip-pk into config
 func NewConsensusNode(id int64, ip string, pk string) {
 	// lock file
@@ -111,7 +74,7 @@ func NewConsensusNode(id int64, ip string, pk string) {
 
 	// set config file
 	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/config.yml")
+	configViper.SetConfigFile("/var/www/html/config.yml")
 
 	// read config and keep origin settings
 	if err := configViper.ReadInConfig(); err != nil {
@@ -149,7 +112,7 @@ func RemoveConsensusNode(id int64) {
 
 	// set config file
 	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/config.yml")
+	configViper.SetConfigFile("/var/www/html/config.yml")
 
 	// read config and keep origin settings
 	if err := configViper.ReadInConfig(); err != nil {
@@ -176,29 +139,101 @@ func RemoveConsensusNode(id int64) {
 	}
 }
 
+// get difficulty from config file
+func GetDifficulty() int {
+	res, err := http.Get("http://152.136.151.161/config.yml")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
+	}
+
+	res.Body.Close()
+
+	output := strings.Fields(string(body))
+	difficulty, err := strconv.Atoi(output[1])
+	if err != nil {
+		panic(fmt.Errorf("===>[ERROR from GetDifficulty]get difficulty:%s", err))
+	}
+
+	return difficulty
+}
+
+// get curve from config file
+func GetCurve() string {
+	res, err := http.Get("http://152.136.151.161/config.yml")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
+	}
+
+	res.Body.Close()
+
+	output := strings.Fields(string(body))
+	curve, err := hex.DecodeString(output[3])
+	if err != nil {
+		panic(fmt.Errorf("===>[ERROR from GetCurve]get Curve:%s", err))
+	}
+
+	// fmt.Println(string(outputByte))
+	return string(curve)
+}
+
+// get previous output from config file
+func GetPreviousOutput() string {
+	res, err := http.Get("http://152.136.151.161/output.yml")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
+	}
+
+	res.Body.Close()
+	output := strings.Fields(string(body))
+
+	return output[1]
+}
+
 // get consensus nodes from config file
 func GetConsensusNode() []NodeConfig {
 	var nodeConfig []NodeConfig
-	// var configuration = new(Configurations)
 
-	// set config file
-	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/config.yml")
-
-	if err := configViper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("===>[ERROR from GetConsensusNode]Read config file failed:%s", err))
+	res, err := http.Get("http://152.136.151.161/config.yml")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
 	}
-	// if err := configViper.Unmarshal(configuration); err != nil {
-	// 	panic(fmt.Errorf("===>[ERROR from GetConsensusNode]Unmarshal conf failed:%s", err))
-	// }
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
+	}
+
+	res.Body.Close()
+
+	output := strings.Fields(string(body))
 
 	for i := 0; i < util.TotalNodeNum; i++ {
 		var node NodeConfig
-		var ipString string = "Node" + strconv.FormatInt(int64(i), 10) + "_Ip"
-		var pkString string = "Node" + strconv.FormatInt(int64(i), 10) + "_Pk"
-		node.Ip = configViper.GetString(ipString)
-		node.Pk = configViper.GetString(pkString)
-
+		node.Ip = output[i*4+7]
+		node.Pk = output[i*4+9]
 		nodeConfig = append(nodeConfig, node)
 	}
 
@@ -207,26 +242,23 @@ func GetConsensusNode() []NodeConfig {
 
 // read configurations from config file
 func ReadConfig() {
-	// var configuration = new(Configurations)
-
-	// set config file
-	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/config.yml")
-	// outputViper := viper.New()
-	// outputViper.SetConfigFile("http://152.136.151.161/output.yml")
-
-	if err := configViper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("===>[ERROR from ReadConfig]Read config file failed:%s", err))
+	res, err := http.Get("http://152.136.151.161/config.yml")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
 	}
-	// if err := configViper.Unmarshal(configuration); err != nil {
-	// 	panic(fmt.Errorf("===>[ERROR from ReadConfig]Unmarshal conf failed:%s", err))
-	// }
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
+		os.Exit(1)
+	}
+
+	res.Body.Close()
+
+	output := strings.Fields(string(body))
 
 	fmt.Printf("\nReading Configuration:\n")
-	fmt.Printf("Running:%v\n", configViper.GetString("Running"))
-	fmt.Printf("Version:%s\n", configViper.GetString("Version"))
-	// fmt.Printf("PreviousOutput:%s\n", outputViper.GetString("PreviousOutput"))
-	fmt.Printf("PreviousOutput:%s\n", ReadOutput())
-	fmt.Printf("EllipticCurve:%v\n", configViper.GetString("EllipticCurve"))
-	fmt.Printf("Consensusnodes:\n")
+	fmt.Printf("Running:%v\n", output[23])
+	fmt.Printf("Version:%s\n", output[27])
 }

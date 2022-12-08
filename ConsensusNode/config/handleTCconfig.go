@@ -6,10 +6,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"math"
 	"math/big"
-
-	"github.com/spf13/viper"
+	"net/http"
+	"os"
+	"strconv"
+	"strings"
 )
 
 var bigOne = big.NewInt(1)
@@ -210,80 +213,126 @@ func GeneratePublicParameter(groupP *GroupParameter, bits int, k int) (*big.Int,
 
 // get timeParameter T from config file
 func GetT() int {
-	// set config file
-	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/TC.yml")
-
-	if err := configViper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("===>[ERROR from GetG]Read config file failed:%s", err))
+	res, err := http.Get("http://152.136.151.161/TC.yml")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/TC.yml", err)
+		os.Exit(1)
 	}
 
-	t := configViper.GetInt("timeParameter")
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/TC.yml", err)
+		os.Exit(1)
+	}
+
+	res.Body.Close()
+
+	output := strings.Fields(string(body))
+	t, err := strconv.Atoi(output[107])
+	if err != nil {
+		panic(fmt.Errorf("===>[ERROR from TimeParameter]get TimeParameter:%s", err))
+	}
 
 	return t
 }
 
 // get groupLength L from config file
 func GetL() int {
-	// set config file
-	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/TC.yml")
-
-	if err := configViper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("===>[ERROR from GetG]Read config file failed:%s", err))
+	res, err := http.Get("http://152.136.151.161/TC.yml")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/TC.yml", err)
+		os.Exit(1)
 	}
 
-	l := configViper.GetInt("groupLength")
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/TC.yml", err)
+		os.Exit(1)
+	}
+
+	res.Body.Close()
+
+	output := strings.Fields(string(body))
+	l, err := strconv.Atoi(output[3])
+	if err != nil {
+		panic(fmt.Errorf("===>[ERROR from GroupLength]get GroupLength:%s", err))
+	}
 
 	return l
 }
 
 // get g from config file
 func GetG() *big.Int {
-	// set config file
-	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/TC.yml")
-
-	if err := configViper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("===>[ERROR from GetG]Read config file failed:%s", err))
+	res, err := http.Get("http://152.136.151.161/TC.yml")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/TC.yml", err)
+		os.Exit(1)
 	}
 
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/TC.yml", err)
+		os.Exit(1)
+	}
+
+	res.Body.Close()
+
+	output := strings.Fields(string(body))
 	g := new(big.Int)
-	g.SetString(configViper.GetString("g"), 10)
+	g.SetString(output[1], 10)
 
 	return g
 }
 
 // get N from config file
 func GetN() *big.Int {
-	// set config file
-	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/TC.yml")
-
-	if err := configViper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("===>[ERROR from GetN]Read config file failed:%s", err))
+	res, err := http.Get("http://152.136.151.161/TC.yml")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/TC.yml", err)
+		os.Exit(1)
 	}
 
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/TC.yml", err)
+		os.Exit(1)
+	}
+
+	res.Body.Close()
+
+	output := strings.Fields(string(body))
 	N := new(big.Int)
-	N.SetString(configViper.GetString("N"), 10)
+	N.SetString(output[30], 10)
 
 	return N
 }
 
 // get N from config file
 func GetMArray() []*big.Int {
-	// set config file
-	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/TC.yml")
+	res, err := http.Get("http://152.136.151.161/TC.yml")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/TC.yml", err)
+		os.Exit(1)
+	}
 
-	if err := configViper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("===>[ERROR from GetMArray]Read config file failed:%s", err))
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/TC.yml", err)
+		os.Exit(1)
+	}
+
+	res.Body.Close()
+
+	output := strings.Fields(string(body))
+
+	t, err := strconv.Atoi(output[107])
+	if err != nil {
+		panic(fmt.Errorf("===>[ERROR from TimeParameter]get TimeParameter:%s", err))
 	}
 
 	var mArray []*big.Int
-	mArrayString := configViper.GetStringSlice("mArray")
-	for _, m := range mArrayString {
-		mBigint, _ := new(big.Int).SetString(m, 10)
+	for i := 0; i < t+2; i++ {
+		mBigint, _ := new(big.Int).SetString(output[6+2*i], 10)
 		mArray = append(mArray, mBigint)
 	}
 

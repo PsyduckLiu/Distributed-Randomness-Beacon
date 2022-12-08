@@ -77,12 +77,7 @@ func SetupConfig() {
 		// generate random init output
 		message := []byte("asdkjhdk")
 		randomNum := util.Digest(message)
-		// outputViper.Set("PreviousOutput", string(randomNum))
 		outputViper.Set("PreviousOutput", hex.EncodeToString(randomNum))
-
-		fmt.Println(randomNum)
-		fmt.Println(hex.EncodeToString(randomNum))
-		// outputViper.Set("PreviousOutput", randomNum)
 
 		// group parameter contains prime numbers p,q and a large number n=p*q of groupLength bits
 		groupLength := GetL()

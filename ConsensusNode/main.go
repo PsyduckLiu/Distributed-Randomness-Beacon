@@ -17,7 +17,9 @@ func main() {
 
 	// start consensus node[id]
 	id, _ := strconv.Atoi(os.Args[1])
-	config.SetupConfig()
+	if id == 0 {
+		config.SetupConfig()
+	}
 	node := node.NewNode(int64(id))
 	go node.Run()
 
