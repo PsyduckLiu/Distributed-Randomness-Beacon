@@ -31,11 +31,11 @@ func SetupConfig() {
 
 	// set config file
 	configViper := viper.New()
-	configViper.SetConfigFile("../Configuration/config.yml")
+	configViper.SetConfigFile("/var/www/html/config.yml")
 	outputViper := viper.New()
 	outputViper.SetConfigFile("/var/www/html/output.yml")
 	tcViper := viper.New()
-	tcViper.SetConfigFile("../Configuration/TC.yml")
+	tcViper.SetConfigFile("/var/www/html/TC.yml")
 
 	// read config and keep origin settings
 	if err := configViper.ReadInConfig(); err != nil {

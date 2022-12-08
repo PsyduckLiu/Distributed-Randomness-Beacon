@@ -94,7 +94,7 @@ func GetPreviousOutput() string {
 	// }
 
 	// return outputViper.GetString("PreviousOutput")
-	return util.ReadOutput()
+	return ReadOutput()
 }
 
 // write new id-ip-pk into config
@@ -226,7 +226,7 @@ func ReadConfig() {
 	fmt.Printf("Running:%v\n", configViper.GetString("Running"))
 	fmt.Printf("Version:%s\n", configViper.GetString("Version"))
 	// fmt.Printf("PreviousOutput:%s\n", outputViper.GetString("PreviousOutput"))
-	fmt.Printf("PreviousOutput:%s\n", util.ReadOutput())
+	fmt.Printf("PreviousOutput:%s\n", ReadOutput())
 	fmt.Printf("EllipticCurve:%v\n", configViper.GetString("EllipticCurve"))
 	fmt.Printf("Consensusnodes:\n")
 }
