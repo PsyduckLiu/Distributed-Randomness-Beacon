@@ -2,7 +2,6 @@ package main
 
 import (
 	"TCP/service"
-	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -31,7 +30,7 @@ func main() {
 		service.Accept()
 	}
 
-	res, err := http.Get("http://152.136.151.161/output.yml")
+	res, err := http.Get("http://152.136.151.161/config.yml")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "fetch: reading %s: %v\n", "http://152.136.151.161/output.yml", err)
 		os.Exit(1)
@@ -47,9 +46,10 @@ func main() {
 	fmt.Printf("%s", string(body))
 
 	output := strings.Fields(string(body))
-	fmt.Println(output[1])
-	fmt.Println([]byte(output[1]))
+	for i := 0; i < len(output); i++ {
+		fmt.Println(output[i])
+	}
 
-	outputByte,err := hex.DecodeString(output[1])
-	fmt.Println(string(outputByte))
+	// outputByte, err := hex.DecodeString(output[1])
+	// fmt.Println(string(outputByte))
 }

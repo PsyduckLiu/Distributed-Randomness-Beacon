@@ -61,7 +61,7 @@ func SetupConfig() {
 		if err != nil {
 			panic(fmt.Errorf("===>[ERROR from SetupConfig]setup conf curve(marshalled Key) failed, err:%s", err))
 		}
-		configViper.Set("EllipticCurve", string(marshalledKey))
+		configViper.Set("EllipticCurve", hex.EncodeToString(marshalledKey))
 
 		// generate random difficulty
 		selectBigInt, _ := rand.Int(rand.Reader, big.NewInt(2))
