@@ -94,7 +94,7 @@ func InitConsensus(id int64) *StateEngine {
 
 // To start randomness beacon, primary writes a random Reveal into Output.yml
 func (s *StateEngine) WriteRandomReveal() {
-	time.Sleep(45 * time.Second)
+	time.Sleep(40 * time.Second)
 	fmt.Println("\n===>[WriteRandomReveal]start wirte config")
 
 	// generate random init input
@@ -207,14 +207,14 @@ func (s *StateEngine) WatchConfig(id int64, sig chan interface{}) {
 				}
 				s.SrvHub = srvHub
 			}
-			s.SrvHub.SetDeadline(time.Now().Add(10 * time.Second))
+			s.SrvHub.SetDeadline(time.Now().Add(20 * time.Second))
 
 			// wait for TC messages from entropy nodes
 			go s.WaitTC(sig, s.quit)
 
 			// start 3 timers for a new round
 			s.GlobalTimer.tick(10 * time.Minute)
-			s.CommitFromEntropyTimer.tick(10 * time.Second)
+			s.CommitFromEntropyTimer.tick(20 * time.Second)
 			// if s.NodeID == s.PrimaryID {
 			// 	s.CollectTimer.tick(1 * time.Second)
 			// }
