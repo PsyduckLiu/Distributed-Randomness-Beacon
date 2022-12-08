@@ -59,8 +59,7 @@ func (s *StateEngine) unionTC(msg *message.ConMessage) (err error) {
 
 	// get specified curve
 	marshalledCurve := config.GetCurve()
-	pubZip, err := util.Decode([]byte(marshalledCurve))
-	pub, err := x509.ParsePKIXPublicKey(pubZip)
+	pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from unionTC]Parse elliptic curve error:%s", err))
 	}

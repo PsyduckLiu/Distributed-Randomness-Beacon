@@ -90,8 +90,7 @@ func (s *StateEngine) procViewChange(msg *message.ConMessage) error {
 
 	// get specified curve
 	marshalledCurve := config.GetCurve()
-	pubZip, err := util.Decode([]byte(marshalledCurve))
-	pub, err := x509.ParsePKIXPublicKey(pubZip)
+	pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from ViewChange]Parse elliptic curve error:%s", err))
 	}
@@ -176,8 +175,7 @@ func (s *StateEngine) didChangeView(msg *message.ConMessage) error {
 
 	// get specified curve
 	marshalledCurve := config.GetCurve()
-	pubZip, err := util.Decode([]byte(marshalledCurve))
-	pub, err := x509.ParsePKIXPublicKey(pubZip)
+	pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from didChangeView]Parse elliptic curve error:%s", err))
 	}

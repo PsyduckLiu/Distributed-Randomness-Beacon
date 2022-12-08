@@ -46,8 +46,7 @@ type SimpleP2p struct {
 func NewSimpleP2pLib(id int64, msgChan chan<- *message.ConMessage) P2pNetwork {
 	// get specified curve
 	marshalledCurve := config.GetCurve()
-	pubZip, err := util.Decode([]byte(marshalledCurve))
-	pub, err := x509.ParsePKIXPublicKey(pubZip)
+	pub, err := x509.ParsePKIXPublicKey([]byte(marshalledCurve))
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from NewSimpleP2pLib]Parse elliptic curve error:%s", err))
 	}
