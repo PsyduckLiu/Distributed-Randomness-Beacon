@@ -192,8 +192,7 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 			nodeConfig := config.GetConsensusNode()
 
 			// unmarshal public key
-			pubZip, err := util.Decode([]byte(conMsg.Payload))
-			pub, err := x509.ParsePKIXPublicKey(pubZip)
+			pub, err := x509.ParsePKIXPublicKey([]byte(conMsg.Payload))
 			if err != nil {
 				panic(fmt.Errorf("===>[ERROR from waitData]Parse public key error:%s", err))
 			}
