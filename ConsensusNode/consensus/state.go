@@ -230,7 +230,7 @@ func (s *StateEngine) WaitTC(sig chan interface{}, quit chan bool) {
 		}
 	}()
 
-	buf := make([]byte, 8192)
+	buf := make([]byte, 16384)
 	for {
 		select {
 		case <-quit:
