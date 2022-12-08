@@ -80,7 +80,7 @@ func SetupConfig() {
 		outputViper.Set("PreviousOutput", hex.EncodeToString(randomNum))
 
 		// group parameter contains prime numbers p,q and a large number n=p*q of groupLength bits
-		groupLength := GetL()
+		groupLength := tcViper.GetInt("groupLength")
 		groupParameter, err := GenerateGroupParameter(rand.Reader, groupLength)
 		if err != nil {
 			panic(fmt.Errorf("===>[ERROR from SetupConfig]generate group parameter failed, err:%s", err))
@@ -91,7 +91,7 @@ func SetupConfig() {
 		fmt.Println("===>[Setup]Is prime[1] prime?", groupParameter.Primes[1].ProbablyPrime(20))
 
 		// generator g
-		timeParameter := GetT()
+		timeParameter := tcViper.GetInt("timeParameter")
 		g, mArray, proofSet := GeneratePublicParameter(groupParameter, groupLength, timeParameter)
 		fmt.Println("===>[Setup]time Parameter T is", timeParameter)
 		fmt.Println("===>[Setup]G is", g)
