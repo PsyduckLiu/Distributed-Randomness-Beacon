@@ -7,7 +7,7 @@ cd ../EntropyProvider
 cat result/running.pid | xargs -IX kill -9 X
 :> result/running.pid
 
-cd ../Configuration
+cd /var/www/html
 cat configInit.yml > config.yml
 cat outputInit.yml > output.yml
 cat TCInit.yml > TC.yml
