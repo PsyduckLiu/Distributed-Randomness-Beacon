@@ -126,92 +126,6 @@ func WatchConfig(ecdsaSK *ecdsa.PrivateKey, vrfSK crypto.VrfPrivkey, id int, sig
 		}
 	}
 
-	// watch config file
-	// myViper := viper.New()
-	// myViper.SetConfigFile("152.136.151.161/output.yml")
-	// myViper.WatchConfig()
-	// myViper.OnConfigChange(func(e fsnotify.Event) {
-	// 	// lock file
-	// 	f, err := os.Open("../lock")
-	// 	if err != nil {
-	// 		panic(fmt.Errorf("===>[ERROR from WatchConfig]Open lock failed:%s", err))
-	// 	}
-	// 	// share lock, concurrently read
-	// 	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_SH); err != nil {
-	// 		panic(fmt.Errorf("===>[ERROR from WatchConfig]Add share lock failed:%s", err))
-	// 	}
-	// 	fmt.Println("===>[Watching]Configuration Changed", time.Now())
-
-	// 	// when new output comes, entropy node starts calculating VRF and sending TC
-	// 	newOutput := string(config.GetPreviousOutput())
-	// 	if previousOutput != newOutput && newOutput != "" {
-	// 		fmt.Println("\n===>[Watching]Output changed,new output is", newOutput)
-	// 		previousOutput = newOutput
-
-	// 		// calculate VRF result
-	// 		msg := util.RandString()
-	// 		vrfResult, ok := vrfSK.Prove(msg)
-	// 		if !ok {
-	// 			panic(fmt.Errorf("===>[ERROR from WatchConfig]Failed to construct VRF proof"))
-	// 		}
-	// 		vrfResultBinary := util.BytesToBinaryString(vrfResult)
-	// 		fmt.Println("===>[Watching]VRF result is:", util.BytesToBinaryString(vrfResult))
-	// 		fmt.Println("===>[Watching]VRF result's last bit is:", vrfResultBinary[len(vrfResultBinary)-1:])
-
-	// 		// compare VRF result with difficulty
-	// 		difficulty := config.GetDifficulty()
-	// 		vrfResultTail, err := strconv.Atoi(vrfResultBinary[len(vrfResultBinary)-1:])
-	// 		if err != nil {
-	// 			panic(fmt.Errorf("===>[ERROR from WatchConfig]Failed to get VRF result's last bit:%s", err))
-	// 		}
-
-	// 		// VRF result passes difficulty requirement
-	// 		if vrfResultTail == difficulty {
-	// 			fmt.Println("===>[Watching]Pass but no use!!!")
-	// 		}
-	// 		if true {
-	// 			fmt.Println("===>[Watching]VRF result passes difficulty requirement!!!")
-
-	// 			// generate timed commitment
-	// 			groupLength := config.GetL()
-	// 			c, h, rKSubOne, rK, a1, a2, a3, z := commitment.GenerateTimedCommitment(groupLength)
-	// 			fmt.Println("\n===>[Watching]In TC, c is", c)
-	// 			fmt.Println("===>[Watching]In TC, h is", h)
-	// 			fmt.Println("===>[Watching]In TC, rKSubOne is", rKSubOne)
-	// 			fmt.Println("===>[Watching]In TC, rK is", rK)
-	// 			fmt.Println("===>[Watching]In TC, a1 is", a1)
-	// 			fmt.Println("===>[Watching]In TC, a2 is", a2)
-	// 			fmt.Println("===>[Watching]In TC, a3 is", a3)
-	// 			fmt.Println("===>[Watching]In TC, z is", z)
-
-	// 			// marshal timed commitment parameters
-	// 			cMarshal, _ := c.MarshalJSON()
-	// 			hMarshal, _ := h.MarshalJSON()
-	// 			rKSubOneMarshal, _ := rKSubOne.MarshalJSON()
-	// 			rKMarshal, _ := rK.MarshalJSON()
-	// 			a1Marshal, _ := a1.MarshalJSON()
-	// 			a2Marshal, _ := a2.MarshalJSON()
-	// 			a3Marshal, _ := a3.MarshalJSON()
-	// 			zMarshal, _ := z.MarshalJSON()
-	// 			fmt.Printf("===>[Watching]Time commitment is:%v,%v,%v,%v\n", cMarshal, hMarshal, rKSubOneMarshal, rKMarshal)
-
-	// 			// send VRF messages and TC messages
-	// 			fmt.Println()
-	// 			time.Sleep(500 * time.Millisecond)
-	// 			sendVRFMsg(ecdsaSK, vrfSK, vrfResult, msg.Data, int64(id), sig)
-	// 			time.Sleep(500 * time.Millisecond)
-	// 			fmt.Println()
-	// 			sendTCMsg(ecdsaSK, int64(id), cMarshal, hMarshal, rKSubOneMarshal, rKMarshal, a1Marshal, a2Marshal, a3Marshal, zMarshal, sig)
-	// 		} else {
-	// 			fmt.Println("===>[Watching]VRF result doesn't pass difficulty requirement***")
-	// 		}
-	// 	}
-
-	// 	// unlock file
-	// 	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_UN); err != nil {
-	// 		panic(fmt.Errorf("===>[ERROR from WatchConfig]Unlock share lock failed:%s", err))
-	// 	}
-	// })
 }
 
 // Entropy node sends VRF message to all Consensus nodes for verification
@@ -250,6 +164,7 @@ func sendVRFMsg(ecdsaSK *ecdsa.PrivateKey, vrfSK crypto.VrfPrivkey, vrfResult cr
 			panic(fmt.Errorf("===>[ERROR from sendVRFMsg]Marshal consensus message failed:%s", err))
 		}
 		fmt.Println("===>[Sending]Length of marshalled consensus VRF message is:", len(bs))
+		fmt.Println(string(bs))
 
 		go WriteTCP(i, conn, bs)
 	}
