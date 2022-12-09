@@ -2,6 +2,7 @@ package util
 
 import (
 	"bytes"
+	"compress/gzip"
 	"crypto/rand"
 	"crypto/sha256"
 	"io/ioutil"
@@ -87,40 +88,40 @@ func ReadOutput() string {
 }
 
 func Encode(input []byte) ([]byte, error) {
-	// var buf bytes.Buffer
-	// gzipWriter := gzip.NewWriter(&buf)
-	// _, err := gzipWriter.Write(input)
-	// if err != nil {
-	// 	_ = gzipWriter.Close()
-	// 	return nil, err
-	// }
-	// if err := gzipWriter.Close(); err != nil {
-	// 	return nil, err
-	// }
+	var buf bytes.Buffer
+	gzipWriter := gzip.NewWriter(&buf)
+	_, err := gzipWriter.Write(input)
+	if err != nil {
+		_ = gzipWriter.Close()
+		return nil, err
+	}
+	if err := gzipWriter.Close(); err != nil {
+		return nil, err
+	}
 
-	// return buf.Bytes(), nil
-	return input, nil
+	return buf.Bytes(), nil
+	// return input, nil
 }
 
 func Decode(input []byte) ([]byte, error) {
-	// bytesReader := bytes.NewReader(input)
-	// gzipReader, err := gzip.NewReader(bytesReader)
-	// if err != nil {
-	// 	fmt.Println("1")
-	// 	return nil, err
-	// }
-	// // defer func() {
-	// // 	_ = gzipReader.Close()
-	// // }()
-	// buf := new(bytes.Buffer)
-	// if _, err := buf.ReadFrom(gzipReader); err != nil {
-	// 	fmt.Println("2")
-	// 	return nil, err
-	// }
-	// if err := gzipReader.Close(); err != nil {
-	// 	fmt.Println("3")
-	// 	return nil, err
-	// }
-	// return buf.Bytes(), nil
-	return input, nil
+	bytesReader := bytes.NewReader(input)
+	gzipReader, err := gzip.NewReader(bytesReader)
+	if err != nil {
+		fmt.Println("1")
+		return nil, err
+	}
+	// defer func() {
+	// 	_ = gzipReader.Close()
+	// }()
+	buf := new(bytes.Buffer)
+	if _, err := buf.ReadFrom(gzipReader); err != nil {
+		fmt.Println("2")
+		return nil, err
+	}
+	if err := gzipReader.Close(); err != nil {
+		fmt.Println("3")
+		return nil, err
+	}
+	return buf.Bytes(), nil
+	// return input, nil
 }
