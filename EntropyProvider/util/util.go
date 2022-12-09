@@ -115,6 +115,10 @@ func Decode(input []byte) ([]byte, error) {
 		fmt.Println("error2")
 		return nil, err
 	}
+	if err := gzipReader.Close(); err != nil {
+		fmt.Println("error3")
+		return nil, err
+	}
 	return data, nil
 
 	// bytesReader := bytes.NewReader(input)
