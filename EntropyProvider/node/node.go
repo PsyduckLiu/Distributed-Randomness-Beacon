@@ -227,6 +227,8 @@ func WriteTCP(id int, conn *net.TCPConn, v []byte) {
 		panic(fmt.Errorf("===>[ERROR from WriteTCP]write to node failed:%s", err))
 	}
 
+	fmt.Println(time.Now())
 	fmt.Printf("===>[Sending]Send request to Node[%d], Address[%s] success\n", id, conn.RemoteAddr().String())
+	fmt.Println(len(v))
 	runtime.Goexit()
 }
