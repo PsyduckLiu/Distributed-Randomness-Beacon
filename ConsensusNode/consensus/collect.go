@@ -118,7 +118,7 @@ func (s *StateEngine) unionTC(msg *message.ConMessage) (err error) {
 	}
 
 	fmt.Println(s.CollectNum)
-	if s.CollectNum == 2*util.MaxFaultyNode {
+	if s.CollectNum == 2*util.MaxFaultyNode+1 {
 		currentTime1 := time.Now()
 		fmt.Println("===>[Union]CollectNum is", s.CollectNum)
 		fmt.Println("===>[Union]From start to Collect finished,passed time1 is", currentTime1.Sub(startTime).Seconds())
