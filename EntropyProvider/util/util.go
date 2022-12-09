@@ -104,24 +104,37 @@ func Encode(input []byte) ([]byte, error) {
 }
 
 func Decode(input []byte) ([]byte, error) {
-	bytesReader := bytes.NewReader(input)
-	gzipReader, err := gzip.NewReader(bytesReader)
+	buf := bytes.NewBuffer(input)
+	gzipReader, err := gzip.NewReader(buf)
 	if err != nil {
-		fmt.Println("1")
+		fmt.Println("error1")
 		return nil, err
 	}
-	// defer func() {
-	// 	_ = gzipReader.Close()
-	// }()
-	buf := new(bytes.Buffer)
-	if _, err := buf.ReadFrom(gzipReader); err != nil {
-		fmt.Println("2")
+	data, err := ioutil.ReadAll(gzipReader)
+	if err != nil {
+		fmt.Println("error2")
 		return nil, err
 	}
-	if err := gzipReader.Close(); err != nil {
-		fmt.Println("3")
-		return nil, err
-	}
-	return buf.Bytes(), nil
+	return data, nil
+
+	// bytesReader := bytes.NewReader(input)
+	// gzipReader, err := gzip.NewReader(bytesReader)
+	// if err != nil {
+	// 	fmt.Println("error1")
+	// 	return nil, err
+	// }
+	// // defer func() {
+	// // 	_ = gzipReader.Close()
+	// // }()
+	// buf := new(bytes.Buffer)
+	// if _, err := buf.ReadFrom(gzipReader); err != nil {
+	// 	fmt.Println("error2")
+	// 	return nil, err
+	// }
+	// if err := gzipReader.Close(); err != nil {
+	// 	fmt.Println("error3")
+	// 	return nil, err
+	// }
+	// return buf.Bytes(), nil
 	// return input, nil
 }
