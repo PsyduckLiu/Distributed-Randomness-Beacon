@@ -122,9 +122,9 @@ func (s *StateEngine) handleTC() (err error) {
 		s.GlobalTimer.tack()
 	}
 
-	time.Sleep(5 * time.Second)
+	// time.Sleep(5 * time.Second)
 	// config.WriteOutput(s.Result.String())
-	fmt.Println("\n===>[Reveal]Reveal time is", time.Now())
+	// fmt.Println("\n===>[Reveal]Reveal time is", time.Now())
 
 	return
 }
