@@ -8,6 +8,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -98,7 +99,11 @@ func (s *StateEngine) procViewChange(msg *message.ConMessage) error {
 	curve := normalPublicKey.Curve
 
 	// unmarshal public key
-	x, y := elliptic.Unmarshal(curve, []byte(nodeConfig[msg.From].Pk))
+	pubHex, err := hex.DecodeString(nodeConfig[msg.From].Pk)
+	if err != nil {
+		panic(fmt.Errorf("===>[ERROR from unionTC]Hex Decode elliptic curve error:%s", err))
+	}
+	x, y := elliptic.Unmarshal(curve, pubHex)
 	newPublicKey := &ecdsa.PublicKey{
 		Curve: curve,
 		X:     x,
@@ -184,7 +189,11 @@ func (s *StateEngine) didChangeView(msg *message.ConMessage) error {
 	curve := normalPublicKey.Curve
 
 	// unmarshal public key
-	x, y := elliptic.Unmarshal(curve, []byte(nodeConfig[msg.From].Pk))
+	pubHex, err := hex.DecodeString(nodeConfig[msg.From].Pk)
+	if err != nil {
+		panic(fmt.Errorf("===>[ERROR from unionTC]Hex Decode elliptic curve error:%s", err))
+	}
+	x, y := elliptic.Unmarshal(curve, pubHex)
 	newPublicKey := &ecdsa.PublicKey{
 		Curve: curve,
 		X:     x,

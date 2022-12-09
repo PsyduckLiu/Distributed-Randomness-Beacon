@@ -10,6 +10,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -67,7 +68,11 @@ func (s *StateEngine) unionTC(msg *message.ConMessage) (err error) {
 	curve := normalPublicKey.Curve
 
 	// unmarshal public key
-	x, y := elliptic.Unmarshal(curve, []byte(nodeConfig[msg.From].Pk))
+	pubHex, err := hex.DecodeString(nodeConfig[msg.From].Pk)
+	if err != nil {
+		panic(fmt.Errorf("===>[ERROR from unionTC]Hex Decode elliptic curve error:%s", err))
+	}
+	x, y := elliptic.Unmarshal(curve, pubHex)
 	newPublicKey := &ecdsa.PublicKey{
 		Curve: curve,
 		X:     x,
@@ -76,6 +81,9 @@ func (s *StateEngine) unionTC(msg *message.ConMessage) (err error) {
 
 	// verify signature
 	cMsgZip, err := util.Decode(msg.Payload)
+	if err != nil {
+		panic(fmt.Errorf("===>[ERROR from CreateConMsg]Generate consensus message failed:%s", err))
+	}
 	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from unionTC]Verify new public key Signature failed, From Node[%d]", msg.From))

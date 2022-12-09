@@ -9,6 +9,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -35,7 +36,11 @@ func (s *StateEngine) PrepareTC(msg *message.ConMessage) (err error) {
 	curve := normalPublicKey.Curve
 
 	// unmarshal public key
-	x, y := elliptic.Unmarshal(curve, []byte(nodeConfig[msg.From].Pk))
+	pubHex, err := hex.DecodeString(nodeConfig[msg.From].Pk)
+	if err != nil {
+		panic(fmt.Errorf("===>[ERROR from unionTC]Hex Decode elliptic curve error:%s", err))
+	}
+	x, y := elliptic.Unmarshal(curve, pubHex)
 	newPublicKey := &ecdsa.PublicKey{
 		Curve: curve,
 		X:     x,
