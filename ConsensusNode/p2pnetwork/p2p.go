@@ -181,8 +181,11 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 		conMsg := &message.ConMessage{}
 		fmt.Println("read from", conn.RemoteAddr().String(), time.Now())
 		cMsgZip, err := util.Decode(buf[:n])
+		if err != nil {
+			panic(fmt.Errorf("===>[ERROR from waitData]Decode data err:%s", err))
+		}
 		if err := json.Unmarshal(cMsgZip, conMsg); err != nil {
-			fmt.Println(cMsgZip)
+			fmt.Println(string(cMsgZip))
 			panic(fmt.Errorf("===>[ERROR from waitData]Unmarshal data err:%s", err))
 		}
 
@@ -219,17 +222,6 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 
 			fmt.Printf("===>[P2P]Get new public key from Node[%d], IP[%s]\n", conMsg.From, conn.RemoteAddr().String())
 			fmt.Printf("===>[P2P]Node[%d<=>%d]Connected=[%s<=>%s]\n", sp.NodeId, conMsg.From, conn.LocalAddr().String(), conn.RemoteAddr().String())
-
-			// add a new node
-			// if sp.PeerPublicKeys[conMsg.From] != newPublicKey {
-			// 	sp.mutex.Lock()
-			// 	sp.Ip2Id[conn.RemoteAddr().String()] = conMsg.From
-			// 	sp.PeerPublicKeys[conMsg.From] = newPublicKey
-			// 	sp.mutex.Unlock()
-
-			// 	fmt.Printf("===>[P2P]Get new public key from Node[%d], IP[%s]\n", conMsg.From, conn.RemoteAddr().String())
-			// 	fmt.Printf("===>[P2P]Node[%d<=>%d]Connected=[%s<=>%s]\n", sp.NodeId, conMsg.From, conn.LocalAddr().String(), conn.RemoteAddr().String())
-			// }
 
 		// handle consensus message from backups
 		default:

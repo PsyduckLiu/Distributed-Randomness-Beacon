@@ -251,9 +251,9 @@ func (s *StateEngine) WaitTC(sig chan interface{}, quit chan bool) {
 			// get message from entropy node
 			msgFromEntropyNode := &message.ConMessage{}
 			eMsgZip, err := util.Decode(buf[:n])
-			fmt.Println(eMsgZip)
+			fmt.Println(string(eMsgZip))
 			if err := json.Unmarshal(eMsgZip, msgFromEntropyNode); err != nil {
-				fmt.Println(eMsgZip)
+				fmt.Println(string(eMsgZip))
 				fmt.Printf("===>[ERROR from WaitTC]Message parse failed:%s", err)
 				continue
 			}
