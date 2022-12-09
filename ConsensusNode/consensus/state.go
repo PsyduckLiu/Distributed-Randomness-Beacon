@@ -172,7 +172,7 @@ func (s *StateEngine) WatchConfig(id int64, sig chan interface{}) {
 	fmt.Println("\n===>[Watching]The earliest Reveal is", previousReveal)
 
 	for {
-		time.Sleep(1 * time.Second)
+		time.Sleep(500 * time.Millisecond)
 
 		// when new Reveal comes, entropy node starts calculating VRF and sending TC
 		newReveal := config.GetPreviousOutput()

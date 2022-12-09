@@ -60,6 +60,8 @@ func WatchConfig(ecdsaSK *ecdsa.PrivateKey, vrfSK crypto.VrfPrivkey, id int, sig
 	fmt.Println("\n===>[Watching]The earliest output is", previousOutput)
 
 	for {
+		time.Sleep(500 * time.Millisecond)
+
 		// when new output comes, entropy node starts calculating VRF and sending TC
 		newOutput := config.GetPreviousOutput()
 		if previousOutput != newOutput && newOutput != "" {
