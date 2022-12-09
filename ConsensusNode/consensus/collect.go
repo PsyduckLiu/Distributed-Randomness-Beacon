@@ -102,6 +102,7 @@ func (s *StateEngine) unionTC(msg *message.ConMessage) (err error) {
 		fmt.Println("===>[Union]new key is", key)
 		fmt.Println("===>[Union]new TimeCommitmentC value is", value[0])
 		s.TimeCommitment[key] = Collect.CollectTC
+		s.TimeCommitmentProof[key] = Collect.TCProof
 		s.TimeCommitmentPropose[key] = false
 	}
 
