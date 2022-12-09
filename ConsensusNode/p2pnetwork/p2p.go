@@ -179,7 +179,7 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 
 		// handle a consensus message
 		conMsg := &message.ConMessage{}
-		fmt.Println("read from", conn.RemoteAddr().String(), time.Now())
+		fmt.Println("read from", conn.RemoteAddr().String(), time.Now(), n)
 		// cMsgZip, err := util.Decode(buf[:n])
 		// if err != nil {
 		// 	fmt.Println(string(buf[:n]))
