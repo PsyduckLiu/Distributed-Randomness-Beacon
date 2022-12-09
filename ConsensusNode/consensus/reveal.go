@@ -50,7 +50,7 @@ func (s *StateEngine) RevealTC(msg *message.ConMessage) (err error) {
 	}
 
 	// verify signature
-	// rMsgZip, err := util.Decode(msg.Payload)
+	rMsgZip, err := util.Decode(msg.Payload)
 	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from RevealTC]Verify new public key Signature failed, From Node[%d]", msg.From))
@@ -58,7 +58,7 @@ func (s *StateEngine) RevealTC(msg *message.ConMessage) (err error) {
 
 	// unmarshal message
 	result := new(string)
-	if err := json.Unmarshal(msg.Payload, result); err != nil {
+	if err := json.Unmarshal(rMsgZip, result); err != nil {
 		panic(fmt.Errorf("===>[ERROR from RevealTC]Invalid[%s] Reveal message[%s]", err, msg))
 	}
 

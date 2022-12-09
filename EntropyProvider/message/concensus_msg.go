@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"encoding/json"
 	"entropyNode/signature"
+	"entropyNode/util"
 	"fmt"
 )
 
@@ -32,18 +33,18 @@ func (cm *ConMessage) String() string {
 // create consensus message
 func CreateConMsg(t MType, msg interface{}, sk *ecdsa.PrivateKey, id int64) *ConMessage {
 	data, err := json.Marshal(msg)
-	// dataZip, err := util.Encode(data)
+	dataZip, err := util.Encode(data)
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from CreateConMsg]Generate consensus message failed:%s", err))
 	}
 
 	// sign message.Payload
-	sig := signature.GenerateSig(data, sk)
+	sig := signature.GenerateSig(dataZip, sk)
 	consMsg := &ConMessage{
 		Typ:     t,
 		Sig:     sig,
 		From:    id,
-		Payload: data,
+		Payload: dataZip,
 	}
 
 	return consMsg

@@ -180,13 +180,13 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 		// handle a consensus message
 		conMsg := &message.ConMessage{}
 		fmt.Println("read from", conn.RemoteAddr().String(), time.Now())
-		cMsgZip, err := util.Decode(buf[:n])
-		if err != nil {
+		// cMsgZip, err := util.Decode(buf[:n])
+		// if err != nil {
+		// 	fmt.Println(string(buf[:n]))
+		// 	panic(fmt.Errorf("===>[ERROR from waitData]Decode data err:%s", err))
+		// }
+		if err := json.Unmarshal(buf[:n], conMsg); err != nil {
 			fmt.Println(string(buf[:n]))
-			panic(fmt.Errorf("===>[ERROR from waitData]Decode data err:%s", err))
-		}
-		if err := json.Unmarshal(cMsgZip, conMsg); err != nil {
-			fmt.Println(string(cMsgZip))
 			panic(fmt.Errorf("===>[ERROR from waitData]Unmarshal data err:%s", err))
 		}
 
@@ -238,14 +238,14 @@ func (sp *SimpleP2p) BroadCast(v interface{}) error {
 	}
 
 	data, err := json.Marshal(v)
-	dataZip, err := util.Encode(data)
+	// dataZip, err := util.Encode(data)
 	if err != nil {
 		return fmt.Errorf("===>[ERROR from BroadCast]Marshal data err:%s", err)
 	}
 
 	for name, conn := range sp.Peers {
 		time.Sleep(100 * time.Millisecond)
-		go WriteTCP(conn, dataZip, name)
+		go WriteTCP(conn, data, name)
 	}
 
 	return nil
@@ -258,12 +258,12 @@ func (sp *SimpleP2p) SendUniqueNode(conn *net.TCPConn, v interface{}) error {
 	}
 
 	data, err := json.Marshal(v)
-	dataZip, err := util.Encode(data)
+	// dataZip, err := util.Encode(data)
 	if err != nil {
 		return fmt.Errorf("===>[ERROR from SendUniqueNode]Marshal data err:%s", err)
 	}
 
-	go WriteTCP(conn, dataZip, conn.RemoteAddr().String())
+	go WriteTCP(conn, data, conn.RemoteAddr().String())
 
 	return nil
 }

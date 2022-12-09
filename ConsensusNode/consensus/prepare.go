@@ -48,7 +48,7 @@ func (s *StateEngine) PrepareTC(msg *message.ConMessage) (err error) {
 	}
 
 	// verify signature
-	// pMsgZip, err := util.Decode(msg.Payload)
+	pMsgZip, err := util.Decode(msg.Payload)
 	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from PrepareTC]Verify new public key Signature failed, From Node[%d]", msg.From))
@@ -56,7 +56,7 @@ func (s *StateEngine) PrepareTC(msg *message.ConMessage) (err error) {
 
 	// unmarshal message
 	Prepare := &message.Prepare{}
-	if err := json.Unmarshal(msg.Payload, Prepare); err != nil {
+	if err := json.Unmarshal(pMsgZip, Prepare); err != nil {
 		panic(fmt.Errorf("===>[ERROR from PrepareTC]Invalid[%s] Prepare message[%s]", err, msg))
 	}
 

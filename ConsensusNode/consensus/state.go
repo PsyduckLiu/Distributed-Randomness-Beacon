@@ -272,8 +272,8 @@ func (s *StateEngine) WaitTC(sig chan interface{}, quit chan bool) {
 				fmt.Printf("===>[WaitTC]new vrf verify message from Node[%d]\n", msgFromEntropyNode.From)
 
 				entropyVRFMsg := &message.EntropyVRFMessage{}
-				// eMsgZip, err := util.Decode(msgFromEntropyNode.Payload)
-				if err := json.Unmarshal(msgFromEntropyNode.Payload, entropyVRFMsg); err != nil {
+				eMsgZip, err := util.Decode(msgFromEntropyNode.Payload)
+				if err := json.Unmarshal(eMsgZip, entropyVRFMsg); err != nil {
 					fmt.Printf("===>[ERROR from WaitTC]Invalid[%s] Entropy VRF message[%s]", err, msgFromEntropyNode)
 					continue
 				}
@@ -317,8 +317,8 @@ func (s *StateEngine) WaitTC(sig chan interface{}, quit chan bool) {
 				fmt.Printf("===>[WaitTC]new CommitFromEntropy message from Node[%d]\n", msgFromEntropyNode.From)
 
 				entropyTCMsg := &message.EntropyTCMessage{}
-				// eMsgZip, err = util.Decode(msgFromEntropyNode.Payload)
-				if err := json.Unmarshal(msgFromEntropyNode.Payload, entropyTCMsg); err != nil {
+				eMsgZip, _ := util.Decode(msgFromEntropyNode.Payload)
+				if err := json.Unmarshal(eMsgZip, entropyTCMsg); err != nil {
 					fmt.Printf("===>[ERROR from WaitTC]Invalid[%s] Entropy TC message[%s]", err, msgFromEntropyNode)
 					continue
 				}
