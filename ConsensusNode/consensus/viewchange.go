@@ -111,7 +111,7 @@ func (s *StateEngine) procViewChange(msg *message.ConMessage) error {
 	}
 
 	// verify signature
-	vMsgZip, err := util.Decode(msg.Payload)
+	// vMsgZip, err := util.Decode(msg.Payload)
 	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from ViewChange]Verify new public key Signature failed, From Node[%d]", msg.From))
@@ -121,7 +121,7 @@ func (s *StateEngine) procViewChange(msg *message.ConMessage) error {
 	// unmarshal message
 	vc := &message.ViewChange{}
 
-	if err := json.Unmarshal(vMsgZip, vc); err != nil {
+	if err := json.Unmarshal(msg.Payload, vc); err != nil {
 		panic(fmt.Errorf("===>[ERROR from ViewChange]Invalid[%s] ViewChange message[%s]", err, msg))
 	}
 
@@ -201,7 +201,7 @@ func (s *StateEngine) didChangeView(msg *message.ConMessage) error {
 	}
 
 	// verify signature
-	nMsgZip, err := util.Decode(msg.Payload)
+	// nMsgZip, err := util.Decode(msg.Payload)
 	verify := signature.VerifySig(msg.Payload, msg.Sig, newPublicKey)
 	if !verify {
 		panic(fmt.Errorf("===>[ERROR from didChangeView]Verify new public key Signature failed, From Node[%d]", msg.From))
@@ -211,7 +211,7 @@ func (s *StateEngine) didChangeView(msg *message.ConMessage) error {
 	// unmarshal message
 	nv := &message.NewView{}
 
-	if err := json.Unmarshal(nMsgZip, nv); err != nil {
+	if err := json.Unmarshal(msg.Payload, nv); err != nil {
 		panic(fmt.Errorf("===>[ERROR from didChangeView]Invalid[%s] Propose message[%s]", err, msg))
 	}
 

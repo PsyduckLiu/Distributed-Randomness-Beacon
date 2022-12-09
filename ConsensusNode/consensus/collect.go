@@ -80,7 +80,7 @@ func (s *StateEngine) unionTC(msg *message.ConMessage) (err error) {
 	}
 
 	// verify signature
-	cMsgZip, err := util.Decode(msg.Payload)
+	// cMsgZip, err := util.Decode(msg.Payload)
 	if err != nil {
 		panic(fmt.Errorf("===>[ERROR from CreateConMsg]Generate consensus message failed:%s", err))
 	}
@@ -91,7 +91,7 @@ func (s *StateEngine) unionTC(msg *message.ConMessage) (err error) {
 
 	// unmarshal message
 	Collect := &message.Collect{}
-	if err := json.Unmarshal(cMsgZip, Collect); err != nil {
+	if err := json.Unmarshal(msg.Payload, Collect); err != nil {
 		panic(fmt.Errorf("===>[ERROR from unionTC]Invalid[%s] Union message[%s]", err, msg))
 	}
 	fmt.Printf("===>[Union]Collect(Union) Message from Node[%d],length is %d\n", msg.From, Collect.Length)
