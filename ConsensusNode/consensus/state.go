@@ -252,6 +252,7 @@ func (s *StateEngine) WaitTC(sig chan interface{}, quit chan bool) {
 			msgFromEntropyNode := &message.ConMessage{}
 			cMsgZip, err := util.Decode(buf[:n])
 			if err != nil {
+				fmt.Println(time.Now(), n)
 				fmt.Println(string(buf[:n]))
 				panic(fmt.Errorf("===>[ERROR from WaitTC]Decode data err:%s", err))
 			}
