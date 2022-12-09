@@ -254,7 +254,7 @@ func (s *StateEngine) WaitTC(sig chan interface{}, quit chan bool) {
 			fmt.Println(string(eMsgZip))
 			if err := json.Unmarshal(eMsgZip, msgFromEntropyNode); err != nil {
 				fmt.Println(string(eMsgZip))
-				fmt.Printf("===>[ERROR from WaitTC]Message parse failed:%s", err)
+				fmt.Printf("===>[ERROR from WaitTC]Message parse failed:%s\n", err)
 				continue
 			}
 			if msgFromEntropyNode.Typ != message.MTCommitFromEntropy && msgFromEntropyNode.Typ != message.MTVRFVerify {

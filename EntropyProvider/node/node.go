@@ -188,7 +188,7 @@ func sendTCMsg(ecdsaSK *ecdsa.PrivateKey, id int64, cMarshal []byte, hMarshal []
 	// get consensus nodes' information
 	nodeConfig := config.GetConsensusNode()
 	for i := 0; i < len(nodeConfig); i++ {
-		time.Sleep(50 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 
 		// dial remote TCP port
 		addr, err := net.ResolveTCPAddr("tcp4", nodeConfig[i].Ip)
