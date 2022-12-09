@@ -250,10 +250,14 @@ func (s *StateEngine) WaitTC(sig chan interface{}, quit chan bool) {
 
 			// get message from entropy node
 			msgFromEntropyNode := &message.ConMessage{}
-			eMsgZip, err := util.Decode(buf[:n])
-			fmt.Println(n, time.Now(), string(eMsgZip))
-			if err := json.Unmarshal(eMsgZip, msgFromEntropyNode); err != nil {
-				fmt.Println(string(eMsgZip))
+			cMsgZip, err := util.Decode(buf[:n])
+			if err != nil {
+				fmt.Println(string(buf[:n]))
+				panic(fmt.Errorf("===>[ERROR from WaitTC]Decode data err:%s", err))
+			}
+			fmt.Println(n, time.Now(), string(cMsgZip))
+			if err := json.Unmarshal(cMsgZip, msgFromEntropyNode); err != nil {
+				fmt.Println(string(cMsgZip))
 				fmt.Printf("===>[ERROR from WaitTC]Message parse failed:%s\n", err)
 				continue
 			}
@@ -267,8 +271,8 @@ func (s *StateEngine) WaitTC(sig chan interface{}, quit chan bool) {
 				fmt.Printf("===>[WaitTC]new vrf verify message from Node[%d]\n", msgFromEntropyNode.From)
 
 				entropyVRFMsg := &message.EntropyVRFMessage{}
-				eMsgZip, err := util.Decode(msgFromEntropyNode.Payload)
-				if err := json.Unmarshal(eMsgZip, entropyVRFMsg); err != nil {
+				// eMsgZip, err := util.Decode(msgFromEntropyNode.Payload)
+				if err := json.Unmarshal(msgFromEntropyNode.Payload, entropyVRFMsg); err != nil {
 					fmt.Printf("===>[ERROR from WaitTC]Invalid[%s] Entropy VRF message[%s]", err, msgFromEntropyNode)
 					continue
 				}
@@ -312,8 +316,8 @@ func (s *StateEngine) WaitTC(sig chan interface{}, quit chan bool) {
 				fmt.Printf("===>[WaitTC]new CommitFromEntropy message from Node[%d]\n", msgFromEntropyNode.From)
 
 				entropyTCMsg := &message.EntropyTCMessage{}
-				eMsgZip, err = util.Decode(msgFromEntropyNode.Payload)
-				if err := json.Unmarshal(eMsgZip, entropyTCMsg); err != nil {
+				// eMsgZip, err = util.Decode(msgFromEntropyNode.Payload)
+				if err := json.Unmarshal(msgFromEntropyNode.Payload, entropyTCMsg); err != nil {
 					fmt.Printf("===>[ERROR from WaitTC]Invalid[%s] Entropy TC message[%s]", err, msgFromEntropyNode)
 					continue
 				}
