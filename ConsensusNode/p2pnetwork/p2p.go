@@ -177,6 +177,11 @@ func (sp *SimpleP2p) waitData(conn *net.TCPConn) {
 			continue
 		}
 
+		if n == 0 {
+			fmt.Println("empty message!!!")
+			continue
+		}
+
 		// handle a consensus message
 		conMsg := &message.ConMessage{}
 		fmt.Println("read from", conn.RemoteAddr().String(), time.Now())
